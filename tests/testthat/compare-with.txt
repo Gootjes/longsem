@@ -1,0 +1,802 @@
+## This is R-Code accompanying the article:
+
+## Mund, M. & Nestler, S. (2017), Beyond the cross-lagged panel model:
+## Next-generation statistical tools for analyzing interdependencies
+## across the life courx Manuscript submitted for publication.
+
+## This script file is licensed under a CC-BY 4.0 licenx
+## For a human-readable summary of that license, see
+## http://creativecommons.org/licenses/by/4.0/
+
+## Authors: Steffen Nestler and Marcus Mund
+
+
+#### ++++++++++++++++++++++++++++++++++++++++++
+####    Cross-Lagged Panel Model           ####
+#### ++++++++++++++++++++++++++++++++++++++++++
+
+## load package
+library(lavaan)
+
+## load data
+data <- read.table("./data/Fakedata_RI-CLPM_R.dat", header = T)
+
+## Define model for lavaan
+clpm <- '
+# Define phantom latent variables
+etax1 =~ 1*x1
+etax2 =~ 1*x2
+etax3 =~ 1*x3
+etax4 =~ 1*x4
+
+etay1 =~ 1*y1
+etay2 =~ 1*y2
+etay3 =~ 1*y3
+etay4 =~ 1*y4
+
+# Autoregressive effects
+etax2 ~ a1*etax1
+etax3 ~ a1*etax2
+etax4 ~ a1*etax3
+
+etay2 ~ a2*etay1
+etay3 ~ a2*etay2
+etay4 ~ a2*etay3
+
+# Crosslagged effects
+etay2 ~ c1*etax1
+etay3 ~ c1*etax2
+etay4 ~ c1*etax3
+
+etax2 ~ c2*etay1
+etax3 ~ c2*etay2
+etax4 ~ c2*etay3
+
+# Some further constraints on the variance structure
+# 1. Set error variances of the observed variables to the same value
+
+x1 ~~ x1
+x2 ~~ x2
+x3 ~~ x3
+x4 ~~ x4
+y1 ~~ y1
+y2 ~~ y2
+y3 ~~ y3
+y4 ~~ y4
+
+# 2. Set the variance of the latent variables, except the first one, to the same value
+etax2 ~~ varx*etax2
+etax3 ~~ varx*etax3
+etax4 ~~ varx*etax4
+etay2 ~~ vary*etay2
+etay3 ~~ vary*etay3
+etay4 ~~ vary*etay4
+
+# 3. Define the variance and the covariance for the first latent variable
+
+etax1 ~~ varx1*etax1
+etay1 ~~ vary1*etay1
+
+# 4. Finally, we estimate the covariance between the latents of x and y
+#    of the first time point, the second time-point and so on. note that
+#    for the second to fourth time point the correlation is constrained to
+#    the same value
+etax1 ~~ cov1*etay1
+etax2 ~~ cove*etay2
+etax3 ~~ cove*etay3
+etax4 ~~ cove*etay4
+
+# 5. The model also contains a mean structure and we have to define some
+#    constraints for this part of the model. We set the intercepts of the 
+#    observed indicators to zero and estimate the means of the latent
+#    variables:
+
+x1 ~ 0*1
+x2 ~ 0*1
+x3 ~ 0*1
+x4 ~ 0*1
+y1 ~ 0*1
+y2 ~ 0*1
+y3 ~ 0*1
+y4 ~ 0*1
+etax1 ~ 1
+etax2 ~ 1
+etax3 ~ 1
+etax4 ~ 1
+etay1 ~ 1
+etay2 ~ 1
+etay3 ~ 1
+etay4 ~ 1
+
+
+## define correlations
+cor1 := cov1 / (sqrt(varx1) * sqrt(vary1))
+core := cove / (sqrt(varx) * sqrt(vary))
+'
+
+fit <- sem(clpm, data = data)
+summary(fit, fit.measures = T)
+
+#### ++++++++++++++++++++++++++++++++++++++++++++++++++++++
+####     Random-Intercept Cross-Lagged Panel Model     ####
+#### ++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+## load package
+library(lavaan)
+
+## load data
+data <- read.table("./data/Fakedata_RI-CLPM_R.dat", header = T)
+
+## Define model for lavaan
+riclpm <- '
+# Define intercept factors
+ix =~ 1*x1+1*x2+1*x3+1*x4
+iy =~ 1*y1+1*y2+1*y3+1*y4
+
+# Define phantom latent variables
+etax1 =~ 1*x1
+etax2 =~ 1*x2
+etax3 =~ 1*x3
+etax4 =~ 1*x4
+
+etay1 =~ 1*y1
+etay2 =~ 1*y2
+etay3 =~ 1*y3
+etay4 =~ 1*y4
+
+# Autoregressive effects
+etax2 ~ a1*etax1
+etax3 ~ a1*etax2
+etax4 ~ a1*etax3
+
+etay2 ~ a2*etay1
+etay3 ~ a2*etay2
+etay4 ~ a2*etay3
+
+# Crosslagged effects
+etay2 ~ c1*etax1
+etay3 ~ c1*etax2
+etay4 ~ c1*etax3
+
+etax2 ~ c2*etay1
+etax3 ~ c2*etay2
+etax4 ~ c2*etay3
+
+# Some further constraints on the variance structure
+# 1. Set error variances of the observed variables to zero
+x1 ~~ 0*x1
+x2 ~~ 0*x2
+x3 ~~ 0*x3
+x4 ~~ 0*x4
+
+y1 ~~ 0*y1
+y2 ~~ 0*y2
+y3 ~~ 0*y3
+y4 ~~ 0*y4
+
+# 2. Let lavaan estimate the variance of the latent variables
+etax1 ~~ varx1*etax1
+etax2 ~~ varx2*etax2
+etax3 ~~ varx3*etax3
+etax4 ~~ varx4*etax4
+
+etay1 ~~ vary1*etay1
+etay2 ~~ vary2*etay2
+etay3 ~~ vary3*etay3
+etay4 ~~ vary4*etay4
+
+# 3. We also want estimates of the intercept factor variances and an
+#    estimate of their covariance
+ix ~~ varix*ix
+iy ~~ variy*iy
+ix ~~ covi*iy
+
+# 4. We have to define that the covariance between the intercepts and
+#    the latents of the first time point are zero
+etax1 ~~ 0*ix
+etay1 ~~ 0*ix
+etax1 ~~ 0*iy
+etay1 ~~ 0*iy
+
+# 5. Finally, we estimate the covariance between the latents of x and y
+#    of the first time point, the second time-point and so on. note that
+#    for the second to fourth time point the correlation is constrained to
+#    the same value
+etax1 ~~ cov1*etay1
+etax2 ~~ e1*etay2
+etax3 ~~ e1*etay3
+etax4 ~~ e1*etay4
+
+# The model also contains a mean structure and we have to define some
+# constraints for this part of the model. the assumption is that we
+# only want estimates of the mean of the intercept factors. all other means
+# are defined to be zero:
+x1 ~ 0*1
+x2 ~ 0*1
+x3 ~ 0*1
+x4 ~ 0*1
+y1 ~ 0*1
+y2 ~ 0*1
+y3 ~ 0*1
+y4 ~ 0*1
+
+etax1 ~ 0*1
+etax2 ~ 0*1
+etax3 ~ 0*1
+etax4 ~ 0*1
+
+etay1 ~ 0*1
+etay2 ~ 0*1
+etay3 ~ 0*1
+etay4 ~ 0*1
+
+ix ~ 1
+iy ~ 1
+
+
+## define correlations
+cori := covi / (sqrt(varix) * sqrt(variy))
+cor1 := cov1 / (sqrt(varx1) * sqrt(vary1))
+cort2 := e1 / (sqrt(varx2) * sqrt(vary2))
+cort3 := e1 / (sqrt(varx3) * sqrt(vary3))
+cort4 := e1 / (sqrt(varx4) * sqrt(vary4))
+'
+
+fit <- sem(riclpm, data = data)
+summary(fit, fit.measures = T)
+
+
+
+#### +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+####    Autoregressive Latent Trajectory Model with Structured Residuals    ####
+#### +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+## load package
+library(lavaan)
+
+## load data
+data <- read.table("./data/Fakedata_ALT-SR_R.dat", header = T)
+
+## Define model for lavaan
+altsr <- '
+# Define intercept and growth factors
+ix =~ 1*x1+1*x2+1*x3+1*x4
+iy =~ 1*y1+1*y2+1*y3+1*y4
+sx =~ 0*x1+1*x2+2*x3+3*x4
+sy =~ 0*y1+1*y2+2*y3+3*y4
+
+# Define phantom latent variables
+etax1 =~ 1*x1
+etax2 =~ 1*x2
+etax3 =~ 1*x3
+etax4 =~ 1*x4
+
+etay1 =~ 1*y1
+etay2 =~ 1*y2
+etay3 =~ 1*y3
+etay4 =~ 1*y4
+
+# Autoregressive effects
+etax2 ~ a1*etax1
+etax3 ~ a1*etax2
+etax4 ~ a1*etax3
+
+etay2 ~ a2*etay1
+etay3 ~ a2*etay2
+etay4 ~ a2*etay3
+
+# Crosslagged effects
+etay2 ~ c1*etax1
+etay3 ~ c1*etax2
+etay4 ~ c1*etax3
+
+etax2 ~ c2*etay1
+etax3 ~ c2*etay2
+etax4 ~ c2*etay3
+
+# Some further constraints on the variance structure
+# 1. Set error variances of the observed variables to zero
+x1 ~~ 0*x1
+x2 ~~ 0*x2
+x3 ~~ 0*x3
+x4 ~~ 0*x4
+
+y1 ~~ 0*y1
+y2 ~~ 0*y2
+y3 ~~ 0*y3
+y4 ~~ 0*y4
+
+# 2. Let lavaan estimate the variance of the latent variables
+etax1 ~~ varx1*etax1
+etax2 ~~ varx2*etax2
+etax3 ~~ varx3*etax3
+etax4 ~~ varx4*etax4
+
+etay1 ~~ vary1*etay1
+etay2 ~~ vary2*etay2
+etay3 ~~ vary3*etay3
+etay4 ~~ vary4*etay4
+
+# 3. We also want estimates of the intercept factor variances, the slope
+#    variances and the different covariances
+ix ~~ varix*ix
+iy ~~ variy*iy
+sx ~~ varsx*sx
+sy ~~ varsy*sy
+
+ix ~~ covi*iy
+ix ~~ covixsx*sx
+ix ~~ covixsy*sy
+iy ~~ coviysx*sx
+iy ~~ coviysy*sy
+sx ~~ covs*sy
+
+# 4. We have to define that the covariance between the intercepts and
+#    the slopes and the latents of the first time point are zero
+etax1 ~~ 0*ix
+etay1 ~~ 0*ix
+etax1 ~~ 0*sx
+etay1 ~~ 0*sx
+etax1 ~~ 0*iy
+etay1 ~~ 0*iy
+etax1 ~~ 0*sy
+etay1 ~~ 0*sy
+
+# 5. Finally, we estimate the covariance between the latents of x and y
+#    of the first time point, the second time-point and so on. note that
+#    for the second to fourth time point the correlation is constrained to
+#    the same value
+etax1 ~~ cov1*etay1
+etax2 ~~ e1*etay2
+etax3 ~~ e1*etay3
+etax4 ~~ e1*etay4
+
+# The model also contains a mean structure and we have to define some
+# constraints for this part of the model. the assumption is that we
+# only want estimates of the mean of the intercept factors. all other means
+# are defined to be zero:
+x1 ~ 0*1
+x2 ~ 0*1
+x3 ~ 0*1
+x4 ~ 0*1
+
+y1 ~ 0*1
+y2 ~ 0*1
+y3 ~ 0*1
+y4 ~ 0*1
+
+etax1 ~ 0*1
+etax2 ~ 0*1
+etax3 ~ 0*1
+etax4 ~ 0*1
+
+etay1 ~ 0*1
+etay2 ~ 0*1
+etay3 ~ 0*1
+etay4 ~ 0*1
+
+ix ~ 1
+iy ~ 1
+sx ~ 1
+sy ~ 1
+
+
+## define correlations
+cori := covi / (sqrt(varix) * sqrt(variy))
+cors := covs / (sqrt(varsx) * sqrt(varsy))
+corixsx := covixsx / (sqrt(varix) * sqrt(varsx))
+corixsy := covixsy / (sqrt(varix) * sqrt(varsy))
+coriysx := coviysx / (sqrt(variy) * sqrt(varsx))
+coriysy := coviysy / (sqrt(variy) * sqrt(varsy))
+
+cor1 := cov1 / (sqrt(varx1) * sqrt(vary1))
+cort2 := e1 / (sqrt(varx2) * sqrt(vary2))
+cort3 := e1 / (sqrt(varx3) * sqrt(vary3))
+cort4 := e1 / (sqrt(varx4) * sqrt(vary4))
+'
+
+fit <- sem(altsr, data = data)
+summary(fit, fit.measures = T)
+
+
+
+#### +++++++++++++++++++++++++++++++++++++++++++++
+####    Univariate Dual Change Score Model    ####
+#### +++++++++++++++++++++++++++++++++++++++++++++
+
+## load package
+library(lavaan)
+
+## load data
+data <- read.table("./data/Fakedata_DCSM_R.dat", header = T)
+
+## Define model for lavaan
+dcsm.uni <- '
+# define latent true scores
+etax1 =~ 1*x1
+etax2 =~ 1*x2
+etax3 =~ 1*x3
+etax4 =~ 1*x4
+
+# define latent differences
+dx2 =~ 1*etax2
+dx3 =~ 1*etax3
+dx4 =~ 1*etax4
+
+# growth factor on latent differences
+gx =~ 1*dx2 + 1*dx3 + 1*dx4
+
+# autoregressions set to one
+etax2 ~ 1*etax1
+etax3 ~ 1*etax2
+etax4 ~ 1*etax3
+
+# proportional effects within a variable
+dx2 ~ p1*etax1
+dx3 ~ p1*etax2
+dx4 ~ p1*etax3
+
+# variance structure
+x1 ~~ ux*x1
+x2 ~~ ux*x2
+x3 ~~ ux*x3
+x4 ~~ ux*x4
+
+etax2 ~~ 0*etax2
+etax3 ~~ 0*etax3
+etax4 ~~ 0*etax4
+
+dx2 ~~ 0*dx2
+dx3 ~~ 0*dx3
+dx4 ~~ 0*dx4
+
+etax1 ~~ varix*etax1
+gx ~~ varsx*gx
+
+gx ~~ covixsx*etax1
+
+# mean structure
+x1 ~ 0*1
+x2 ~ 0*1
+x3 ~ 0*1
+x4 ~ 0*1
+
+etax2 ~ 0*1
+etax3 ~ 0*1
+etax4 ~ 0*1
+
+dx2 ~ 0*1
+dx3 ~ 0*1
+dx4 ~ 0*1
+
+etax1 ~ 1
+gx ~ 1
+
+
+# define correlations
+corixsx := covixsx / (sqrt(varix) * sqrt(varsx))
+
+'
+
+fit <- sem(dcsm.uni, data = data, orthogonal = T)
+summary(fit, fit.measures = T)
+
+
+
+#### ++++++++++++++++++++++++++++++++++++++++++++
+####    Bivariate Dual Change Score Model    ####
+#### ++++++++++++++++++++++++++++++++++++++++++++
+
+## load package
+library(lavaan)
+
+## load data
+data <- read.table("./data/Fakedata_DCSM_R.dat", header = T)
+
+## Define model for lavaan
+dcsm <- '
+# define latent true scores
+etax1 =~ 1*x1
+etax2 =~ 1*x2
+etax3 =~ 1*x3
+etax4 =~ 1*x4
+
+etay1 =~ 1*y1
+etay2 =~ 1*y2
+etay3 =~ 1*y3
+etay4 =~ 1*y4
+
+# define latent differences
+dx2 =~ 1*etax2
+dx3 =~ 1*etax3
+dx4 =~ 1*etax4
+
+dy2 =~ 1*etay2
+dy3 =~ 1*etay3
+dy4 =~ 1*etay4
+
+# growth factor on latent differences
+gx =~ 1*dx2 + 1*dx3 + 1*dx4
+gy =~ 1*dy2 + 1*dy3 + 1*dy4
+
+# autoregressions set to one
+etax2 ~ 1*etax1
+etax3 ~ 1*etax2
+etax4 ~ 1*etax3
+
+etay2 ~ 1*etay1
+etay3 ~ 1*etay2
+etay4 ~ 1*etay3
+
+# proportional effects within a variable
+dx2 ~ p1*etax1
+dx3 ~ p1*etax2
+dx4 ~ p1*etax3
+
+dy2 ~ p2*etay1
+dy3 ~ p2*etay2
+dy4 ~ p2*etay3
+
+# proportional effects between variables
+dy2 ~ c1*etax1
+dy3 ~ c1*etax2
+dy4 ~ c1*etax3
+
+dx2 ~ c2*etay1
+dx3 ~ c2*etay2
+dx4 ~ c2*etay3
+
+# variance structure
+x1 ~~ ux*x1
+x2 ~~ ux*x2
+x3 ~~ ux*x3
+x4 ~~ ux*x4
+
+y1 ~~ uy*y1
+y2 ~~ uy*y2
+y3 ~~ uy*y3
+y4 ~~ uy*y4
+
+etax2 ~~ 0*etax2
+etax3 ~~ 0*etax3
+etax4 ~~ 0*etax4
+
+etay2 ~~ 0*etay2
+etay3 ~~ 0*etay3
+etay4 ~~ 0*etay4
+
+dx2 ~~ 0*dx2
+dx3 ~~ 0*dx3
+dx4 ~~ 0*dx4
+
+dy2 ~~ 0*dy2
+dy3 ~~ 0*dy3
+dy4 ~~ 0*dy4
+
+etax1 ~~ varix*etax1
+etay1 ~~ variy*etay1
+gx ~~ varsx*gx
+gy ~~ varsy*gy
+
+etax1 ~~ covi*etay1
+gx ~~ covixsx*etax1
+gx ~~ coviysx*etay1
+gy ~~ covixsy*etax1
+gy ~~ coviysy*etay1
+gx ~~ covs*gy
+
+# mean structure
+x1 ~ 0*1
+x2 ~ 0*1
+x3 ~ 0*1
+x4 ~ 0*1
+
+y1 ~ 0*1
+y2 ~ 0*1
+y3 ~ 0*1
+y4 ~ 0*1
+
+etax2 ~ 0*1
+etax3 ~ 0*1
+etax4 ~ 0*1
+
+etay2 ~ 0*1
+etay3 ~ 0*1
+etay4 ~ 0*1
+
+dx2 ~ 0*1
+dx3 ~ 0*1
+dx4 ~ 0*1
+
+dy2 ~ 0*1
+dy3 ~ 0*1
+dy4 ~ 0*1
+
+etax1 ~ 1
+etay1 ~ 1
+
+gx ~ 1
+gy ~ 1
+
+
+# define correlations
+cori := covi / (sqrt(varix) * sqrt(variy))
+cors := covs / (sqrt(varsx) * sqrt(varsy))
+corixsx := covixsx / (sqrt(varix) * sqrt(varsx))
+corixsy := covixsy / (sqrt(varix) * sqrt(varsy))
+coriysx := coviysx / (sqrt(variy) * sqrt(varsx))
+coriysy := covixsx / (sqrt(variy) * sqrt(varsy))
+
+'
+
+fit <- sem(dcsm, data = data, orthogonal = T)
+summary(fit, fit.measures = T)
+
+
+
+#### +++++++++++++++++++++++++++++++++++++++++++++++++++++
+####    Extended Bivariate Dual Change Score Model    ####
+#### +++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+## load package
+library(lavaan)
+
+## load data
+data <- read.table("./data/Fakedata_ExtendedDCSM_R.dat", header = T)
+
+## Define model for lavaan
+dcsm.ext <- '
+# define latent true scores
+etax1 =~ 1*x1
+etax2 =~ 1*x2
+etax3 =~ 1*x3
+etax4 =~ 1*x4
+
+etay1 =~ 1*y1
+etay2 =~ 1*y2
+etay3 =~ 1*y3
+etay4 =~ 1*y4
+
+# define latent differences
+dx2 =~ 1*etax2
+dx3 =~ 1*etax3
+dx4 =~ 1*etax4
+
+dy2 =~ 1*etay2
+dy3 =~ 1*etay3
+dy4 =~ 1*etay4
+
+# growth factor on latent differences
+gx =~ 1*dx2 + 1*dx3 + 1*dx4
+gy =~ 1*dy2 + 1*dy3 + 1*dy4
+
+# autoregressions set to one
+etax2 ~ 1*etax1
+etax3 ~ 1*etax2
+etax4 ~ 1*etax3
+
+etay2 ~ 1*etay1
+etay3 ~ 1*etay2
+etay4 ~ 1*etay3
+
+# proportional effects within a variable
+dx2 ~ p1*etax1
+dx3 ~ p1*etax2
+dx4 ~ p1*etax3
+
+dy2 ~ p2*etay1
+dy3 ~ p2*etay2
+dy4 ~ p2*etay3
+
+# proportional effects between variables
+dy2 ~ c1*etax1
+dy3 ~ c1*etax2
+dy4 ~ c1*etax3
+
+dx2 ~ c2*etay1
+dx3 ~ c2*etay2
+dx4 ~ c2*etay3
+
+# Regressions of the latent difference variables
+# Changes to changes extension in Grimm et al., 2012
+# Wihin variables:
+dx3 ~ phi_x*dx2
+dx4 ~ phi_x*dx3
+
+dy3 ~ phi_y*dy2
+dy4 ~ phi_y*dy3
+
+# Between variables:
+dx3 ~ gamma_yx*dy2
+dx4 ~ gamma_yx*dy3
+dy3 ~ gamma_xy*dx2
+dy4 ~ gamma_xy*dx3
+
+
+# variance structure
+x1 ~~ ux*x1
+x2 ~~ ux*x2
+x3 ~~ ux*x3
+x4 ~~ ux*x4
+
+y1 ~~ uy*y1
+y2 ~~ uy*y2
+y3 ~~ uy*y3
+y4 ~~ uy*y4
+
+etax2 ~~ 0*etax2
+etax3 ~~ 0*etax3
+etax4 ~~ 0*etax4
+
+etay2 ~~ 0*etay2
+etay3 ~~ 0*etay3
+etay4 ~~ 0*etay4
+
+dx2 ~~ 0*dx2
+dx3 ~~ 0*dx3
+dx4 ~~ 0*dx4
+
+dy2 ~~ 0*dy2
+dy3 ~~ 0*dy3
+dy4 ~~ 0*dy4
+
+etax1 ~~ varix*etax1
+etay1 ~~ variy*etay1
+gx ~~ varsx*gx
+gy ~~ varsy*gy
+
+etax1 ~~ covi*etay1
+gx ~~ covixsx*etax1
+gx ~~ coviysx*etay1
+gy ~~ covixsy*etax1
+gy ~~ coviysy*etay1
+gx ~~ covs*gy
+
+# mean structure
+x1 ~ 0*1
+x2 ~ 0*1
+x3 ~ 0*1
+x4 ~ 0*1
+
+y1 ~ 0*1
+y2 ~ 0*1
+y3 ~ 0*1
+y4 ~ 0*1
+
+etax2 ~ 0*1
+etax3 ~ 0*1
+etax4 ~ 0*1
+
+etay2 ~ 0*1
+etay3 ~ 0*1
+etay4 ~ 0*1
+
+dx2 ~ 0*1
+dx3 ~ 0*1
+dx4 ~ 0*1
+
+dy2 ~ 0*1
+dy3 ~ 0*1
+dy4 ~ 0*1
+
+etax1 ~ 1
+etay1 ~ 1
+
+gx ~ 1
+gy ~ 1
+
+
+# define correlations
+cori := covi / (sqrt(varix) * sqrt(variy))
+cors := covs / (sqrt(varsx) * sqrt(varsy))
+corixsx := covixsx / (sqrt(varix) * sqrt(varsx))
+corixsy := covixsy / (sqrt(varix) * sqrt(varsy))
+coriysx := coviysx / (sqrt(variy) * sqrt(varsx))
+coriysy := covixsx / (sqrt(variy) * sqrt(varsy))
+
+'
+
+fit <- sem(dcsm.ext, data = data, orthogonal = T)
+summary(fit, fit.measures = T)
+
+

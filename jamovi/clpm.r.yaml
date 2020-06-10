@@ -1,0 +1,33 @@
+---
+name:  clpm
+title: Cross lagged panel model
+jrs:   '1.1'
+
+items:
+
+    - name:  lavaan_warnings
+      title: Lavaan warnings
+      type:  Table
+      rows: 1
+      columns:
+        - name: warning_text
+          title: Warnings
+          type: text
+          content: No warnings from lavaan!
+
+
+    - name:  text
+      title: Cross lagged panel model
+      type:  Preformatted
+
+    - name: lavaan_syntax
+      title: Syntax
+      type: Preformatted
+      visible: (show_lavaan_syntax)
+
+    - name: schematic_plot
+      title: Schematic
+      type: Image
+      visible: (show_schematic_plot)
+      renderFun: .plotSchematic
+...

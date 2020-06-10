@@ -1,0 +1,28 @@
+---
+title: What the Package Does (Title Case)
+name: riclpm
+version: 0.0.0
+jms: '1.0'
+authors:
+  - Who wrote it
+maintainer: The package maintainer <yourself@somewhere.net>
+date: '1970-01-01'
+type: R
+description: >-
+  More about what it does (maybe more than one line) Use four spaces when
+  indenting paragraphs within the Description.
+analyses:
+  - title: Cross lagged panel model
+    name: clpm
+    ns: riclpm
+    menuGroup: riclpm
+    menuTitle: Cross lagged panel model
+  - title: Random Intercept CLPM
+    name: riclpm
+    ns: riclpm
+    menuGroup: riclpm
+    menuTitle: Random Intercept CLPM
+usesNative: true
+minApp: 1.0.8
+
+...

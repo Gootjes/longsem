@@ -1,0 +1,73 @@
+title: Cross-lagged panel model
+name: clpm
+jus: '3.0'
+stage: 0
+compilerMode: tame
+children:
+  - type: VariableSupplier
+    persistentItems: true
+    stretchFactor: 1
+    suggested:
+      - continuous
+      - ordinal
+    permitted:
+      - numeric
+    children:
+      - type: TargetLayoutBox
+        label: Factors
+        children:
+          - type: ListBox
+            name: factors
+            height: large
+            addButton: Add New Factor
+            templateName: linreg-block-template
+            template:
+              type: LayoutBox
+              margin: normal
+              children:
+                - type: TextBox
+                  valueKey:
+                    - label
+                  borderless: true
+                  name: blockName
+                  stretchFactor: 1
+                  margin: normal
+                - type: VariablesListBox
+                  valueFilter: unique
+                  valueKey:
+                    - vars
+                  name: blockList
+                  isTarget: true
+                  height: auto
+                  ghostText: drag variables here
+  - type: LayoutBox
+    margin: large
+    children:
+      - type: CheckBox
+        name: estimate_latent_intercepts
+      - type: CheckBox
+        name: estimate_observed_intercepts
+      - type: CheckBox
+        name: estimate_observed_errors
+      - type: CheckBox
+        name: constrain_crosslagged
+      - type: CheckBox
+        name: constrain_covariances
+      - type: CheckBox
+        name: constrain_autoregressions
+      - type: CheckBox
+        name: constrain_latent_variances
+      - type: CheckBox
+        name: constrain_observed_errors
+      - type: CheckBox
+        name: show_lavaan_syntax
+  - type: LayoutBox
+    margin: large
+    children:
+      - type: ComboBox
+        name: missing_data_treatment
+  - type: LayoutBox
+    margin: large
+    children:
+      - type: CheckBox
+        name: show_schematic_plot

@@ -1,0 +1,64 @@
+title: Random Intercept CLPM
+name: riclpm
+jus: '3.0'
+stage: 0
+compilerMode: tame
+children:
+  - type: VariableSupplier
+    persistentItems: true
+    stretchFactor: 1
+    suggested:
+      - continuous
+      - ordinal
+    permitted:
+      - numeric
+    children:
+      - type: TargetLayoutBox
+        label: Factors
+        children:
+          - type: ListBox
+            name: factors
+            height: large
+            addButton: Add New Factor
+            templateName: linreg-block-template
+            template:
+              type: LayoutBox
+              margin: normal
+              children:
+                - type: TextBox
+                  valueKey:
+                    - label
+                  borderless: true
+                  name: blockName
+                  stretchFactor: 1
+                  margin: normal
+                - type: VariablesListBox
+                  valueFilter: unique
+                  valueKey:
+                    - vars
+                  name: blockList
+                  isTarget: true
+                  height: auto
+                  ghostText: drag variables here
+  - type: LayoutBox
+    margin: large
+    children:
+      - type: CheckBox
+        name: constrain_crosslagged
+      - type: CheckBox
+        name: constrain_autoregressions
+      - type: CheckBox
+        name: estimate_intercepts_intercepts
+      - type: CheckBox
+        name: estimate_observed_intercepts
+      - type: CheckBox
+        name: constrain_covariances
+      - type: CheckBox
+        name: show_lavaan_syntax
+      - type: CheckBox
+        name: show_lavaan_output
+  - type: LayoutBox
+    margin: large
+    children:
+      - type: ComboBox
+        name: missing_data_treatment

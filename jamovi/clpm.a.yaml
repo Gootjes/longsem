@@ -1,0 +1,97 @@
+---
+name:  clpm
+title: Cross lagged panel model
+menuGroup: riclpm
+version: '1.0.0'
+jas: '1.2'
+
+options:
+    - name: data
+      type: Data
+      description:
+          R: the data as a data frame
+
+    - name: factors
+      title: Factors
+      type: Array
+      default:
+        - label: X
+          vars: []
+        - label: Y
+          vars: []
+      template:
+          type: Group
+          elements:
+            - name: label
+              type: String
+            - name: vars
+              type: Variables
+              suggested:
+                - continuous
+              permitted:
+                - numeric
+      description:
+          R: >
+            a list containing named lists that define the `label` of
+            the factor and the `vars` that belong to that factor
+
+    - name: constrain_crosslagged
+      title: Constrain crosslagged paths
+      type: Bool
+      default: false
+
+    - name: constrain_autoregressions
+      title: Constrain autoregressions
+      type: Bool
+      default: false
+
+    - name: constrain_latent_variances
+      title: Constrain latent variances
+      type: Bool
+      default: false
+
+    - name: constrain_observed_errors
+      title: Constrain indicator errors
+      type: Bool
+      default: false
+
+    - name: constrain_covariances
+      title: Constrain covariances
+      type: Bool
+      default: false
+
+    - name: estimate_observed_intercepts
+      title: Estimate indicator intercepts
+      type: Bool
+      default: true
+
+    - name: estimate_observed_errors
+      title: Estimate indicator errors
+      type: Bool
+      default: false
+
+    - name: estimate_latent_intercepts
+      title: Estimate latent intercepts
+      type: Bool
+      default: false
+
+    - name: show_lavaan_syntax
+      title: Show lavaan syntax
+      type: Bool
+      default: false
+
+    - name: missing_data_treatment
+      title: Missing data treatment
+      type: List
+      options:
+        - title: Maximum Likelihood
+          name: ml
+        - title: Listwise deletion
+          name: listwise
+      default: listwise
+
+    - name: show_schematic_plot
+      title: Show schematic
+      type: Bool
+      default: true
+...
