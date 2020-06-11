@@ -38,25 +38,45 @@ options:
     - name: constrain_crosslagged
       title: Constrain crosslagged paths
       type: Bool
-      default: true
+      default: false
 
     - name: constrain_autoregressions
       title: Constrain autoregressions
       type: Bool
-      default: true
+      default: false
 
-    - name: estimate_intercepts_intercepts
-      title: Estimate RI intercept
+    - name: constrain_latent_variances
+      title: Constrain latent variances
       type: Bool
-      default: true
+      default: false
 
-    - name: estimate_observed_intercepts
-      title: Estimate indicator intercepts
+    - name: constrain_observed_errors
+      title: Constrain indicator errors
       type: Bool
       default: false
 
     - name: constrain_covariances
       title: Constrain covariances
+      type: Bool
+      default: false
+
+    - name: estimate_observed_intercepts
+      title: Estimate indicator intercepts
+      type: Bool
+      default: true
+
+    - name: estimate_observed_errors
+      title: Estimate indicator errors
+      type: Bool
+      default: false
+
+    - name: estimate_latent_intercepts
+      title: Estimate latent intercepts
+      type: Bool
+      default: false
+
+    - name: estimate_intercepts_intercepts
+      title: Estimate RI intercept
       type: Bool
       default: false
 

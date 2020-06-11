@@ -22,7 +22,7 @@ clpmOptions <- if (requireNamespace('jmvcore')) R6::R6Class(
             show_schematic_plot = TRUE, ...) {
 
             super$initialize(
-                package='riclpm',
+                package='longsem',
                 name='clpm',
                 requiresData=TRUE,
                 ...)
@@ -183,7 +183,7 @@ clpmBase <- if (requireNamespace('jmvcore')) R6::R6Class(
     public = list(
         initialize = function(options, data=NULL, datasetId="", analysisId="", revision=0) {
             super$initialize(
-                package = 'riclpm',
+                package = 'longsem',
                 name = 'clpm',
                 version = c(1,0,0),
                 options = options,

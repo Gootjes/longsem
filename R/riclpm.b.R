@@ -26,7 +26,7 @@ riclpmClass <- if (requireNamespace('jmvcore')) R6::R6Class(
                     nv <- paste0(factor_names[[i]], j)
                     t_factor_definitions$addRow(rowKey = ((i-1)*length(factors)) + j, values = list(
                         factor = factor_names[[i]],
-                        wave = j,
+                        time = j,
                         variable = v
                     ))
                 }
@@ -59,9 +59,13 @@ riclpmClass <- if (requireNamespace('jmvcore')) R6::R6Class(
                                       nfactors = length(factors),
                                       constrain_autoregressions = self$options$constrain_autoregressions,
                                       constrain_crosslagged = self$options$constrain_crosslagged,
-                                      estimate_intercepts_intercepts = self$options$estimate_intercepts_intercepts,
+                                      constrain_observed_errors = self$options$constrain_observed_errors,
+                                      constrain_latent_variance_min_1 = self$options$constrain_latent_variances,
+                                      constrain_covariances = self$options$constrain_covariances,
                                       estimate_observed_intercepts = self$options$estimate_observed_intercepts,
-                                      constrain_covariances = self$options$constrain_covariances)
+                                      estimate_observed_errors = self$options$estimate_observed_errors,
+                                      estimate_latent_intercepts = self$options$estimate_latent_intercepts,
+                                      estimate_intercepts_intercepts = self$options$estimate_intercepts_intercepts)
 
             #data <- private$.cleanData()
 
@@ -107,13 +111,15 @@ riclpmClass <- if (requireNamespace('jmvcore')) R6::R6Class(
             lvs <- self$results$lavaan_syntax
             lvs$setContent(m)
 
-            t_estimates <- self$results$parameter_estimates
+            #t_estimates <- self$results$parameter_estimates
 
             estims <- parameterEstimates(f, standardized = TRUE, rsquare = T)
 
             #tlv <- self$results$latent_variables
-            tlv <- t_estimates$get("1")$get("estimates")
-            tlv$setTitle("Latent variables")
+            #print(t_estimates$.__enclos_env__$private$.items)
+            #tlv <- t_estimates$get("Latent variables")$get("estimates")
+            #tlv$setTitle("Latent variables")
+            tlv <- self$results$latent_variables
 
             tlv_estims <- estims
 
@@ -126,8 +132,9 @@ riclpmClass <- if (requireNamespace('jmvcore')) R6::R6Class(
             }
 
 
-            trilv <- t_estimates$get("2")$get("estimates")
-            trilv$setTitle("Latent Random Intercept variables")
+            #trilv <- t_estimates$get("Latent random intercept variables")$get("estimates")
+            #trilv$setTitle("Latent Random Intercept variables")
+            trilv <- self$results$random_intercept_latent_variables
 
             trilv_estims <- estims
 
@@ -139,8 +146,9 @@ riclpmClass <- if (requireNamespace('jmvcore')) R6::R6Class(
             }
 
 
-            tal <- t_estimates$get("3")$get("estimates")
-            tal$setTitle("Autolagged paths")
+            #tal <- t_estimates$get("Autolagged paths")$get("estimates")
+            #tal$setTitle("Autolagged paths")
+            tal <- self$results$autolagged_paths
 
             tal_estims <- estims
 
@@ -152,8 +160,9 @@ riclpmClass <- if (requireNamespace('jmvcore')) R6::R6Class(
             }
 
 
-            tcl <- t_estimates$get("4")$get("estimates")
-            tcl$setTitle("Crosslagged paths")
+            #tcl <- t_estimates$get("Crosslagged paths")$get("estimates")
+            #tcl$setTitle("Crosslagged paths")
+            tcl <- self$results$crosslagged_paths
 
             tcl_estims <- estims
 
@@ -164,8 +173,9 @@ riclpmClass <- if (requireNamespace('jmvcore')) R6::R6Class(
                 tcl$addRow(rowKey = i, values = c(tcl_estims[i,]))
             }
 
-            tcov <- t_estimates$get("5")$get("estimates")
-            tcov$setTitle("Covariances")
+            #tcov <- t_estimates$get("Covariances")$get("estimates")
+            #tcov$setTitle("Covariances")
+            tcov <- self$results$covariances
 
             tcov_estims <- estims
 
@@ -177,8 +187,8 @@ riclpmClass <- if (requireNamespace('jmvcore')) R6::R6Class(
             }
 
 
-            tvar <- t_estimates$get("6")$get("estimates")
-            tvar$setTitle("(Error) variances")
+            #tvar <- t_estimates$get("(Error) variances")$get("estimates")
+            tvar <- self$results$variances
 
             tvar_estims <- estims
 

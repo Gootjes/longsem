@@ -9,17 +9,21 @@ riclpmOptions <- if (requireNamespace('jmvcore')) R6::R6Class(
             factors = list(
                 list(label="X", vars=list()),
                 list(label="Y", vars=list())),
-            constrain_crosslagged = TRUE,
-            constrain_autoregressions = TRUE,
-            estimate_intercepts_intercepts = TRUE,
-            estimate_observed_intercepts = FALSE,
+            constrain_crosslagged = FALSE,
+            constrain_autoregressions = FALSE,
+            constrain_latent_variances = FALSE,
+            constrain_observed_errors = FALSE,
             constrain_covariances = FALSE,
+            estimate_observed_intercepts = TRUE,
+            estimate_observed_errors = FALSE,
+            estimate_latent_intercepts = FALSE,
+            estimate_intercepts_intercepts = FALSE,
             show_lavaan_syntax = FALSE,
             show_lavaan_output = FALSE,
             missing_data_treatment = "listwise", ...) {
 
             super$initialize(
-                package='riclpm',
+                package='longsem',
                 name='riclpm',
                 requiresData=TRUE,
                 ...)
@@ -47,22 +51,38 @@ riclpmOptions <- if (requireNamespace('jmvcore')) R6::R6Class(
             private$..constrain_crosslagged <- jmvcore::OptionBool$new(
                 "constrain_crosslagged",
                 constrain_crosslagged,
-                default=TRUE)
+                default=FALSE)
             private$..constrain_autoregressions <- jmvcore::OptionBool$new(
                 "constrain_autoregressions",
                 constrain_autoregressions,
-                default=TRUE)
-            private$..estimate_intercepts_intercepts <- jmvcore::OptionBool$new(
-                "estimate_intercepts_intercepts",
-                estimate_intercepts_intercepts,
-                default=TRUE)
-            private$..estimate_observed_intercepts <- jmvcore::OptionBool$new(
-                "estimate_observed_intercepts",
-                estimate_observed_intercepts,
+                default=FALSE)
+            private$..constrain_latent_variances <- jmvcore::OptionBool$new(
+                "constrain_latent_variances",
+                constrain_latent_variances,
+                default=FALSE)
+            private$..constrain_observed_errors <- jmvcore::OptionBool$new(
+                "constrain_observed_errors",
+                constrain_observed_errors,
                 default=FALSE)
             private$..constrain_covariances <- jmvcore::OptionBool$new(
                 "constrain_covariances",
                 constrain_covariances,
+                default=FALSE)
+            private$..estimate_observed_intercepts <- jmvcore::OptionBool$new(
+                "estimate_observed_intercepts",
+                estimate_observed_intercepts,
+                default=TRUE)
+            private$..estimate_observed_errors <- jmvcore::OptionBool$new(
+                "estimate_observed_errors",
+                estimate_observed_errors,
+                default=FALSE)
+            private$..estimate_latent_intercepts <- jmvcore::OptionBool$new(
+                "estimate_latent_intercepts",
+                estimate_latent_intercepts,
+                default=FALSE)
+            private$..estimate_intercepts_intercepts <- jmvcore::OptionBool$new(
+                "estimate_intercepts_intercepts",
+                estimate_intercepts_intercepts,
                 default=FALSE)
             private$..show_lavaan_syntax <- jmvcore::OptionBool$new(
                 "show_lavaan_syntax",
@@ -83,9 +103,13 @@ riclpmOptions <- if (requireNamespace('jmvcore')) R6::R6Class(
             self$.addOption(private$..factors)
             self$.addOption(private$..constrain_crosslagged)
             self$.addOption(private$..constrain_autoregressions)
-            self$.addOption(private$..estimate_intercepts_intercepts)
-            self$.addOption(private$..estimate_observed_intercepts)
+            self$.addOption(private$..constrain_latent_variances)
+            self$.addOption(private$..constrain_observed_errors)
             self$.addOption(private$..constrain_covariances)
+            self$.addOption(private$..estimate_observed_intercepts)
+            self$.addOption(private$..estimate_observed_errors)
+            self$.addOption(private$..estimate_latent_intercepts)
+            self$.addOption(private$..estimate_intercepts_intercepts)
             self$.addOption(private$..show_lavaan_syntax)
             self$.addOption(private$..show_lavaan_output)
             self$.addOption(private$..missing_data_treatment)
@@ -94,9 +118,13 @@ riclpmOptions <- if (requireNamespace('jmvcore')) R6::R6Class(
         factors = function() private$..factors$value,
         constrain_crosslagged = function() private$..constrain_crosslagged$value,
         constrain_autoregressions = function() private$..constrain_autoregressions$value,
-        estimate_intercepts_intercepts = function() private$..estimate_intercepts_intercepts$value,
-        estimate_observed_intercepts = function() private$..estimate_observed_intercepts$value,
+        constrain_latent_variances = function() private$..constrain_latent_variances$value,
+        constrain_observed_errors = function() private$..constrain_observed_errors$value,
         constrain_covariances = function() private$..constrain_covariances$value,
+        estimate_observed_intercepts = function() private$..estimate_observed_intercepts$value,
+        estimate_observed_errors = function() private$..estimate_observed_errors$value,
+        estimate_latent_intercepts = function() private$..estimate_latent_intercepts$value,
+        estimate_intercepts_intercepts = function() private$..estimate_intercepts_intercepts$value,
         show_lavaan_syntax = function() private$..show_lavaan_syntax$value,
         show_lavaan_output = function() private$..show_lavaan_output$value,
         missing_data_treatment = function() private$..missing_data_treatment$value),
@@ -104,9 +132,13 @@ riclpmOptions <- if (requireNamespace('jmvcore')) R6::R6Class(
         ..factors = NA,
         ..constrain_crosslagged = NA,
         ..constrain_autoregressions = NA,
-        ..estimate_intercepts_intercepts = NA,
-        ..estimate_observed_intercepts = NA,
+        ..constrain_latent_variances = NA,
+        ..constrain_observed_errors = NA,
         ..constrain_covariances = NA,
+        ..estimate_observed_intercepts = NA,
+        ..estimate_observed_errors = NA,
+        ..estimate_latent_intercepts = NA,
+        ..estimate_intercepts_intercepts = NA,
         ..show_lavaan_syntax = NA,
         ..show_lavaan_output = NA,
         ..missing_data_treatment = NA)
@@ -117,7 +149,6 @@ riclpmResults <- if (requireNamespace('jmvcore')) R6::R6Class(
     active = list(
         factor_definitions = function() private$.items[["factor_definitions"]],
         lavaan_warnings = function() private$.items[["lavaan_warnings"]],
-        parameter_estimates = function() private$.items[["parameter_estimates"]],
         latent_variables = function() private$.items[["latent_variables"]],
         random_intercept_latent_variables = function() private$.items[["random_intercept_latent_variables"]],
         autolagged_paths = function() private$.items[["autolagged_paths"]],
@@ -144,8 +175,8 @@ riclpmResults <- if (requireNamespace('jmvcore')) R6::R6Class(
                         `title`="Factor", 
                         `type`="Text"),
                     list(
-                        `name`="wave", 
-                        `title`="Wave", 
+                        `name`="time", 
+                        `title`="Time", 
                         `type`="Text"),
                     list(
                         `name`="variable", 
@@ -162,76 +193,6 @@ riclpmResults <- if (requireNamespace('jmvcore')) R6::R6Class(
                         `title`="Warnings", 
                         `type`="Text", 
                         `content`="No warnings from lavaan!"))))
-            self$add(jmvcore::Array$new(
-                options=options,
-                name="parameter_estimates",
-                title="Parameter estimates",
-                items=6,
-                template=R6::R6Class(
-                    inherit = jmvcore::Group,
-                    active = list(
-                        estimates = function() private$.items[["estimates"]]),
-                    private = list(),
-                    public=list(
-                        initialize=function(options) {
-                            super$initialize(
-                                options=options,
-                                name="undefined",
-                                title="$key")
-                            self$add(jmvcore::Table$new(
-                                options=options,
-                                name="estimates",
-                                title="Estimates",
-                                rows=0,
-                                columns=list(
-                                    list(
-                                        `name`="lhs", 
-                                        `title`="", 
-                                        `type`="text"),
-                                    list(
-                                        `name`="op", 
-                                        `title`="", 
-                                        `type`="text"),
-                                    list(
-                                        `name`="rhs", 
-                                        `title`="", 
-                                        `type`="text"),
-                                    list(
-                                        `name`="label", 
-                                        `title`="Label", 
-                                        `type`="text"),
-                                    list(
-                                        `name`="est", 
-                                        `title`="Estimate", 
-                                        `type`="number"),
-                                    list(
-                                        `name`="se", 
-                                        `title`="Std.Err", 
-                                        `type`="number"),
-                                    list(
-                                        `name`="z", 
-                                        `title`="z-value", 
-                                        `type`="number"),
-                                    list(
-                                        `name`="pvalue", 
-                                        `title`="p(>|z|)", 
-                                        `type`="number"),
-                                    list(
-                                        `name`="ci.lower", 
-                                        `title`="ci.lwr", 
-                                        `type`="number"),
-                                    list(
-                                        `name`="ci.upper", 
-                                        `title`="ci.upr", 
-                                        `type`="number"),
-                                    list(
-                                        `name`="std.lv", 
-                                        `title`="Std.lv", 
-                                        `type`="number"),
-                                    list(
-                                        `name`="std.all", 
-                                        `title`="Std.all", 
-                                        `type`="number"))))}))$new(options=options)))
             self$add(jmvcore::Table$new(
                 options=options,
                 name="latent_variables",
@@ -573,7 +534,7 @@ riclpmBase <- if (requireNamespace('jmvcore')) R6::R6Class(
     public = list(
         initialize = function(options, data=NULL, datasetId="", analysisId="", revision=0) {
             super$initialize(
-                package = 'riclpm',
+                package = 'longsem',
                 name = 'riclpm',
                 version = c(1,0,0),
                 options = options,
@@ -595,9 +556,13 @@ riclpmBase <- if (requireNamespace('jmvcore')) R6::R6Class(
 #'   of the factor and the \code{vars} that belong to that factor
 #' @param constrain_crosslagged .
 #' @param constrain_autoregressions .
-#' @param estimate_intercepts_intercepts .
-#' @param estimate_observed_intercepts .
+#' @param constrain_latent_variances .
+#' @param constrain_observed_errors .
 #' @param constrain_covariances .
+#' @param estimate_observed_intercepts .
+#' @param estimate_observed_errors .
+#' @param estimate_latent_intercepts .
+#' @param estimate_intercepts_intercepts .
 #' @param show_lavaan_syntax .
 #' @param show_lavaan_output .
 #' @param missing_data_treatment .
@@ -605,7 +570,6 @@ riclpmBase <- if (requireNamespace('jmvcore')) R6::R6Class(
 #' \tabular{llllll}{
 #'   \code{results$factor_definitions} \tab \tab \tab \tab \tab a table \cr
 #'   \code{results$lavaan_warnings} \tab \tab \tab \tab \tab a table \cr
-#'   \code{results$parameter_estimates} \tab \tab \tab \tab \tab an array of tables \cr
 #'   \code{results$latent_variables} \tab \tab \tab \tab \tab a table \cr
 #'   \code{results$random_intercept_latent_variables} \tab \tab \tab \tab \tab a table \cr
 #'   \code{results$autolagged_paths} \tab \tab \tab \tab \tab a table \cr
@@ -628,11 +592,15 @@ riclpm <- function(
     factors = list(
                 list(label="X", vars=list()),
                 list(label="Y", vars=list())),
-    constrain_crosslagged = TRUE,
-    constrain_autoregressions = TRUE,
-    estimate_intercepts_intercepts = TRUE,
-    estimate_observed_intercepts = FALSE,
+    constrain_crosslagged = FALSE,
+    constrain_autoregressions = FALSE,
+    constrain_latent_variances = FALSE,
+    constrain_observed_errors = FALSE,
     constrain_covariances = FALSE,
+    estimate_observed_intercepts = TRUE,
+    estimate_observed_errors = FALSE,
+    estimate_latent_intercepts = FALSE,
+    estimate_intercepts_intercepts = FALSE,
     show_lavaan_syntax = FALSE,
     show_lavaan_output = FALSE,
     missing_data_treatment = "listwise") {
@@ -649,9 +617,13 @@ riclpm <- function(
         factors = factors,
         constrain_crosslagged = constrain_crosslagged,
         constrain_autoregressions = constrain_autoregressions,
-        estimate_intercepts_intercepts = estimate_intercepts_intercepts,
-        estimate_observed_intercepts = estimate_observed_intercepts,
+        constrain_latent_variances = constrain_latent_variances,
+        constrain_observed_errors = constrain_observed_errors,
         constrain_covariances = constrain_covariances,
+        estimate_observed_intercepts = estimate_observed_intercepts,
+        estimate_observed_errors = estimate_observed_errors,
+        estimate_latent_intercepts = estimate_latent_intercepts,
+        estimate_intercepts_intercepts = estimate_intercepts_intercepts,
         show_lavaan_syntax = show_lavaan_syntax,
         show_lavaan_output = show_lavaan_output,
         missing_data_treatment = missing_data_treatment)

@@ -229,21 +229,25 @@ generate_riclpm_syntax <- function(factor_length = 4,
                                    factor_names = c("x", "y", "z", "w"),
                                    constrain_autoregressions = F,
                                    constrain_crosslagged = F,
-                                   constrain_covariances = T,
-                                   estimate_observed_intercepts = FALSE,
+                                   constrain_observed_errors = F,
+                                   constrain_latent_variance_min_1 = F,
+                                   constrain_covariances = F,
+                                   estimate_observed_intercepts = F,
+                                   estimate_observed_errors = F,
+                                   estimate_latent_intercepts = F,
                                    estimate_intercepts_intercepts = FALSE) {
 
   clpm_syntax <- generate_clpm_syntax(factor_length = factor_length,
                                       nfactors = nfactors,
                                       factor_names = factor_names,
-                                      estimate_observed_errors = FALSE,
-                                      constrain_latent_variance_min_1 = FALSE,
+                                      constrain_autoregressions = constrain_autoregressions,
+                                      constrain_crosslagged = constrain_crosslagged,
+                                      constrain_observed_errors = constrain_observed_errors,
+                                      constrain_latent_variance_min_1 = constrain_latent_variance_min_1,
                                       constrain_covariances = constrain_covariances,
                                       estimate_observed_intercepts = estimate_observed_intercepts,
-                                      estimate_latent_intercepts = estimate_intercepts_intercepts,
-                                      constrain_autoregressions = constrain_autoregressions,
-                                      constrain_crosslagged = constrain_crosslagged)
-
+                                      estimate_observed_errors = estimate_observed_errors,
+                                      estimate_latent_intercepts = estimate_latent_intercepts)
 
   falongs <- 1:factor_length
 

@@ -50,9 +50,17 @@ children:
       - type: CheckBox
         name: estimate_intercepts_intercepts
       - type: CheckBox
+        name: constrain_latent_variances
+      - type: CheckBox
         name: estimate_observed_intercepts
       - type: CheckBox
+        name: constrain_observed_errors
+      - type: CheckBox
+        name: estimate_observed_errors
+      - type: CheckBox
         name: constrain_covariances
+      - type: CheckBox
+        name: estimate_latent_intercepts
       - type: CheckBox
         name: show_lavaan_syntax
       - type: CheckBox

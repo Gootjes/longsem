@@ -1,7 +1,7 @@
 ---
 title: What the Package Does (Title Case)
-name: riclpm
-version: 0.0.0
+name: longsem
+version: 0.0.1
 jms: '1.0'
 authors:
   - Who wrote it
@@ -14,12 +14,12 @@ description: >-
 analyses:
   - title: Cross lagged panel model
     name: clpm
-    ns: riclpm
+    ns: longsem
     menuGroup: riclpm
     menuTitle: Cross lagged panel model
   - title: Random Intercept CLPM
     name: riclpm
-    ns: riclpm
+    ns: longsem
     menuGroup: riclpm
     menuTitle: Random Intercept CLPM
 usesNative: true

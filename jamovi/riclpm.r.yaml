@@ -13,8 +13,8 @@ items:
         - name: factor
           title: Factor
           type: Text
-        - name: wave
-          title: Wave
+        - name: time
+          title: Time
           type: Text
         - name: variable
           title: Variable
@@ -30,68 +30,11 @@ items:
           type: Text
           content: No warnings from lavaan!
 
-    - name: parameter_estimates
-      title: Parameter estimates
-      type: Array
-      description: an array of tables
-      items:
-        - "Latent variables"
-        - "Latent random intercept variables"
-        - "Autolagged paths"
-        - "Crosslagged paths"
-        - "Covariances"
-        - "(Error) variances"
-      template:
-          title: $key
-          type: Group
-          items:
-            - name: estimates
-              title: Estimates
-              type: Table
-              rows: 0
-              columns:
-                - name: lhs
-                  title: ""
-                  type: text
-                - name: op
-                  title: ""
-                  type: text
-                - name: rhs
-                  title: ""
-                  type: text
-                - name: label
-                  title: "Label"
-                  type: text
-                - name: est
-                  title: Estimate
-                  type: number
-                - name: se
-                  title: Std.Err
-                  type: number
-                - name: z
-                  title: "z-value"
-                  type: number
-                - name: pvalue
-                  title: "p(>|z|)"
-                  type: number
-                - name: ci.lower
-                  title: ci.lwr
-                  type: number
-                - name: ci.upper
-                  title: ci.upr
-                  type: number
-                - name: std.lv
-                  title: Std.lv
-                  type: number
-                - name: std.all
-                  title: Std.all
-                  type: number
-
     - name: latent_variables
       title: Latent variables
       type: Table
       rows: 0
-      columns:
+      columns: &idcols
         - name: lhs
           title: ""
           type: text
@@ -133,211 +76,31 @@ items:
       title: Random Intercept Latent variables
       type: Table
       rows: 0
-      columns:
-        - name: lhs
-          title: ""
-          type: text
-        - name: op
-          title: ""
-          type: text
-        - name: rhs
-          title: ""
-          type: text
-        - name: label
-          title: "Label"
-          type: text
-        - name: est
-          title: Estimate
-          type: number
-        - name: se
-          title: Std.Err
-          type: number
-        - name: z
-          title: "z-value"
-          type: number
-        - name: pvalue
-          title: "p(>|z|)"
-          type: number
-        - name: ci.lower
-          title: ci.lwr
-          type: number
-        - name: ci.upper
-          title: ci.upr
-          type: number
-        - name: std.lv
-          title: Std.lv
-          type: number
-        - name: std.all
-          title: Std.all
-          type: number
+      columns: *idcols
 
     - name: autolagged_paths
       title: "Autolagged paths"
       type: Table
       rows: 0
-      columns:
-        - name: lhs
-          title: ""
-          type: text
-        - name: op
-          title: ""
-          type: text
-        - name: rhs
-          title: ""
-          type: text
-        - name: label
-          title: "Label"
-          type: text
-        - name: est
-          title: Estimate
-          type: number
-        - name: se
-          title: Std.Err
-          type: number
-        - name: z
-          title: "z-value"
-          type: number
-        - name: pvalue
-          title: "p(>|z|)"
-          type: number
-        - name: ci.lower
-          title: ci.lwr
-          type: number
-        - name: ci.upper
-          title: ci.upr
-          type: number
-        - name: std.lv
-          title: Std.lv
-          type: number
-        - name: std.all
-          title: Std.all
-          type: number
+      columns: *idcols
 
     - name: crosslagged_paths
       title: "Crosslagged paths"
       type: Table
       rows: 0
-      columns:
-        - name: lhs
-          title: ""
-          type: text
-        - name: op
-          title: ""
-          type: text
-        - name: rhs
-          title: ""
-          type: text
-        - name: label
-          title: "Label"
-          type: text
-        - name: est
-          title: Estimate
-          type: number
-        - name: se
-          title: Std.Err
-          type: number
-        - name: z
-          title: "z-value"
-          type: number
-        - name: pvalue
-          title: "p(>|z|)"
-          type: number
-        - name: ci.lower
-          title: ci.lwr
-          type: number
-        - name: ci.upper
-          title: ci.upr
-          type: number
-        - name: std.lv
-          title: Std.lv
-          type: number
-        - name: std.all
-          title: Std.all
-          type: number
+      columns: *idcols
 
     - name: covariances
       title: "Covariances"
       type: Table
       rows: 0
-      columns:
-        - name: lhs
-          title: ""
-          type: text
-        - name: op
-          title: ""
-          type: text
-        - name: rhs
-          title: ""
-          type: text
-        - name: label
-          title: "Label"
-          type: text
-        - name: est
-          title: Estimate
-          type: number
-        - name: se
-          title: Std.Err
-          type: number
-        - name: z
-          title: "z-value"
-          type: number
-        - name: pvalue
-          title: "p(>|z|)"
-          type: number
-        - name: ci.lower
-          title: ci.lwr
-          type: number
-        - name: ci.upper
-          title: ci.upr
-          type: number
-        - name: std.lv
-          title: Std.lv
-          type: number
-        - name: std.all
-          title: Std.all
-          type: number
+      columns: *idcols
 
     - name: variances
       title: "(Error) variances"
       type: Table
       rows: 0
-      columns:
-        - name: lhs
-          title: ""
-          type: text
-        - name: op
-          title: ""
-          type: text
-        - name: rhs
-          title: ""
-          type: text
-        - name: label
-          title: "Label"
-          type: text
-        - name: est
-          title: Estimate
-          type: number
-        - name: se
-          title: Std.Err
-          type: number
-        - name: z
-          title: "z-value"
-          type: number
-        - name: pvalue
-          title: "p(>|z|)"
-          type: number
-        - name: ci.lower
-          title: ci.lwr
-          type: number
-        - name: ci.upper
-          title: ci.upr
-          type: number
-        - name: std.lv
-          title: Std.lv
-          type: number
-        - name: std.all
-          title: Std.all
-          type: number
+      columns: *idcols
 
     - name:  lavaan_output
       title: Lavaan output
