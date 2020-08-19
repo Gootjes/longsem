@@ -55,17 +55,32 @@ riclpmClass <- if (requireNamespace('jmvcore')) R6::R6Class(
                 }
             }
 
-            m <- generate_riclpm_syntax(factor_length = factor_lengths[1],
-                                      nfactors = length(factors),
-                                      constrain_autoregressions = self$options$constrain_autoregressions,
-                                      constrain_crosslagged = self$options$constrain_crosslagged,
-                                      constrain_observed_errors = self$options$constrain_observed_errors,
-                                      constrain_latent_variance_min_1 = self$options$constrain_latent_variances,
-                                      constrain_covariances = self$options$constrain_covariances,
-                                      estimate_observed_intercepts = self$options$estimate_observed_intercepts,
-                                      estimate_observed_errors = self$options$estimate_observed_errors,
-                                      estimate_latent_intercepts = self$options$estimate_latent_intercepts,
-                                      estimate_intercepts_intercepts = self$options$estimate_intercepts_intercepts)
+            if(self$options$include_random_intercept) {
+                m <- generate_riclpm_syntax(factor_length = factor_lengths[1],
+                                            nfactors = length(factors),
+                                            constrain_autoregressions = self$options$constrain_autoregressions,
+                                            constrain_crosslagged = self$options$constrain_crosslagged,
+                                            constrain_observed_errors = self$options$constrain_observed_errors,
+                                            constrain_latent_variance_min_1 = self$options$constrain_latent_variances,
+                                            constrain_covariances = self$options$constrain_covariances,
+                                            estimate_observed_intercepts = self$options$estimate_observed_intercepts,
+                                            estimate_observed_errors = self$options$estimate_observed_errors,
+                                            estimate_latent_intercepts = self$options$estimate_latent_intercepts,
+                                            estimate_intercepts_intercepts = self$options$estimate_intercepts_intercepts)
+            } else {
+                m <- generate_clpm_syntax(factor_length = factor_lengths[1],
+                                            nfactors = length(factors),
+                                            constrain_autoregressions = self$options$constrain_autoregressions,
+                                            constrain_crosslagged = self$options$constrain_crosslagged,
+                                            constrain_observed_errors = self$options$constrain_observed_errors,
+                                            constrain_latent_variance_min_1 = self$options$constrain_latent_variances,
+                                            constrain_covariances = self$options$constrain_covariances,
+                                            estimate_observed_intercepts = self$options$estimate_observed_intercepts,
+                                            estimate_observed_errors = self$options$estimate_observed_errors,
+                                            estimate_latent_intercepts = self$options$estimate_latent_intercepts)
+            }
+
+
 
             #data <- private$.cleanData()
 
@@ -187,6 +202,17 @@ riclpmClass <- if (requireNamespace('jmvcore')) R6::R6Class(
             }
 
 
+            tint <- self$results$intercepts
+
+            tint_estims <- estims
+
+            tint_estims <- tint_estims[tint_estims$op == "~1",]
+
+            for(i in seq_along(tint_estims[,1,drop=T])) {
+                tint$addRow(rowKey = i, values = c(tint_estims[i,]))
+            }
+
+
             #tvar <- t_estimates$get("(Error) variances")$get("estimates")
             tvar <- self$results$variances
 
@@ -200,7 +226,27 @@ riclpmClass <- if (requireNamespace('jmvcore')) R6::R6Class(
             }
 
 
+            if(self$options$show_schematic_plot) {
+                p <- self$results$schematic_plot
+                p$setSize(width = max(c(600, 200*factor_lengths[[1]])), height = 600)
+                p$setState(make_schematic(n_waves = factor_lengths[[1]], n_factors = length(factors), return_spec = T,
+                                          constrain_autoregressions = self$options$constrain_autoregressions,
+                                          constrain_crosslagged = self$options$constrain_crosslagged,
+                                          constrain_covariances = self$options$constrain_covariances,
+                                          include_random_intercept = self$options$include_random_intercept))
+            }
 
+        },
+        .plotSchematic = function(image, ...) {
+            spec <- image$state
 
+            if(!is.list(spec)) {
+                print(NULL)
+                return(TRUE)
+            }
+
+            print(do.call(diagram::plotmat, args = spec))
+
+            TRUE
         })
 )

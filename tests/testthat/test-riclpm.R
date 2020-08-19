@@ -14,7 +14,7 @@ test_that("riclpm works", {
 test_that("we can replicate Flournoy", {
   expect_equal(
     object = {
-      data("antiread", package = "riclpm")
+      data("antiread", package = "longsem")
       data <- antiread
       names(data) <- gsub(pattern = "^anti([0-9])$", replacement = "x\\1", x = names(data))
       names(data) <- gsub(pattern = "^read([0-9])$", replacement = "y\\1", x = names(data))

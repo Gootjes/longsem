@@ -35,6 +35,16 @@ options:
             a list containing named lists that define the `label` of
             the factor and the `vars` that belong to that factor
 
+    - name: show_schematic_plot
+      title: Show schematic plot
+      type: Bool
+      default: true
+
+    - name: include_random_intercept
+      title: Include Random Intercept (RI-CLPM)
+      type: Bool
+      default: false
+
     - name: constrain_crosslagged
       title: Constrain crosslagged paths
       type: Bool

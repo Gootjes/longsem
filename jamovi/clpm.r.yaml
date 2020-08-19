@@ -15,6 +15,11 @@ items:
           type: text
           content: No warnings from lavaan!
 
+    - name: schematic_plot
+      title: Schematic
+      type: Image
+      visible: (show_schematic_plot)
+      renderFun: .plotSchematic
 
     - name:  text
       title: Cross lagged panel model
@@ -25,9 +30,5 @@ items:
       type: Preformatted
       visible: (show_lavaan_syntax)
 
-    - name: schematic_plot
-      title: Schematic
-      type: Image
-      visible: (show_schematic_plot)
-      renderFun: .plotSchematic
+
 ...

@@ -68,5 +68,12 @@ children:
   - type: LayoutBox
     margin: large
     children:
+      - type: CheckBox
+        name: show_schematic_plot
+      - type: CheckBox
+        name: include_random_intercept
+  - type: LayoutBox
+    margin: large
+    children:
       - type: ComboBox
         name: missing_data_treatment

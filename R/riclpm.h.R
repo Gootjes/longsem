@@ -9,6 +9,8 @@ riclpmOptions <- if (requireNamespace('jmvcore')) R6::R6Class(
             factors = list(
                 list(label="X", vars=list()),
                 list(label="Y", vars=list())),
+            show_schematic_plot = TRUE,
+            include_random_intercept = FALSE,
             constrain_crosslagged = FALSE,
             constrain_autoregressions = FALSE,
             constrain_latent_variances = FALSE,
@@ -48,6 +50,14 @@ riclpmOptions <- if (requireNamespace('jmvcore')) R6::R6Class(
                                 "continuous"),
                             permitted=list(
                                 "numeric")))))
+            private$..show_schematic_plot <- jmvcore::OptionBool$new(
+                "show_schematic_plot",
+                show_schematic_plot,
+                default=TRUE)
+            private$..include_random_intercept <- jmvcore::OptionBool$new(
+                "include_random_intercept",
+                include_random_intercept,
+                default=FALSE)
             private$..constrain_crosslagged <- jmvcore::OptionBool$new(
                 "constrain_crosslagged",
                 constrain_crosslagged,
@@ -101,6 +111,8 @@ riclpmOptions <- if (requireNamespace('jmvcore')) R6::R6Class(
                 default="listwise")
 
             self$.addOption(private$..factors)
+            self$.addOption(private$..show_schematic_plot)
+            self$.addOption(private$..include_random_intercept)
             self$.addOption(private$..constrain_crosslagged)
             self$.addOption(private$..constrain_autoregressions)
             self$.addOption(private$..constrain_latent_variances)
@@ -116,6 +128,8 @@ riclpmOptions <- if (requireNamespace('jmvcore')) R6::R6Class(
         }),
     active = list(
         factors = function() private$..factors$value,
+        show_schematic_plot = function() private$..show_schematic_plot$value,
+        include_random_intercept = function() private$..include_random_intercept$value,
         constrain_crosslagged = function() private$..constrain_crosslagged$value,
         constrain_autoregressions = function() private$..constrain_autoregressions$value,
         constrain_latent_variances = function() private$..constrain_latent_variances$value,
@@ -130,6 +144,8 @@ riclpmOptions <- if (requireNamespace('jmvcore')) R6::R6Class(
         missing_data_treatment = function() private$..missing_data_treatment$value),
     private = list(
         ..factors = NA,
+        ..show_schematic_plot = NA,
+        ..include_random_intercept = NA,
         ..constrain_crosslagged = NA,
         ..constrain_autoregressions = NA,
         ..constrain_latent_variances = NA,
@@ -149,11 +165,13 @@ riclpmResults <- if (requireNamespace('jmvcore')) R6::R6Class(
     active = list(
         factor_definitions = function() private$.items[["factor_definitions"]],
         lavaan_warnings = function() private$.items[["lavaan_warnings"]],
+        schematic_plot = function() private$.items[["schematic_plot"]],
         latent_variables = function() private$.items[["latent_variables"]],
         random_intercept_latent_variables = function() private$.items[["random_intercept_latent_variables"]],
         autolagged_paths = function() private$.items[["autolagged_paths"]],
         crosslagged_paths = function() private$.items[["crosslagged_paths"]],
         covariances = function() private$.items[["covariances"]],
+        intercepts = function() private$.items[["intercepts"]],
         variances = function() private$.items[["variances"]],
         lavaan_output = function() private$.items[["lavaan_output"]],
         lavaan_syntax = function() private$.items[["lavaan_syntax"]]),
@@ -193,6 +211,12 @@ riclpmResults <- if (requireNamespace('jmvcore')) R6::R6Class(
                         `title`="Warnings", 
                         `type`="Text", 
                         `content`="No warnings from lavaan!"))))
+            self$add(jmvcore::Image$new(
+                options=options,
+                name="schematic_plot",
+                title="Schematic",
+                visible="(show_schematic_plot)",
+                renderFun=".plotSchematic"))
             self$add(jmvcore::Table$new(
                 options=options,
                 name="latent_variables",
@@ -300,7 +324,8 @@ riclpmResults <- if (requireNamespace('jmvcore')) R6::R6Class(
                     list(
                         `name`="std.all", 
                         `title`="Std.all", 
-                        `type`="number"))))
+                        `type`="number")),
+                visible="(include_random_intercept)"))
             self$add(jmvcore::Table$new(
                 options=options,
                 name="autolagged_paths",
@@ -465,6 +490,60 @@ riclpmResults <- if (requireNamespace('jmvcore')) R6::R6Class(
                         `type`="number"))))
             self$add(jmvcore::Table$new(
                 options=options,
+                name="intercepts",
+                title="Intercepts",
+                rows=0,
+                columns=list(
+                    list(
+                        `name`="lhs", 
+                        `title`="", 
+                        `type`="text"),
+                    list(
+                        `name`="op", 
+                        `title`="", 
+                        `type`="text"),
+                    list(
+                        `name`="rhs", 
+                        `title`="", 
+                        `type`="text"),
+                    list(
+                        `name`="label", 
+                        `title`="Label", 
+                        `type`="text"),
+                    list(
+                        `name`="est", 
+                        `title`="Estimate", 
+                        `type`="number"),
+                    list(
+                        `name`="se", 
+                        `title`="Std.Err", 
+                        `type`="number"),
+                    list(
+                        `name`="z", 
+                        `title`="z-value", 
+                        `type`="number"),
+                    list(
+                        `name`="pvalue", 
+                        `title`="p(>|z|)", 
+                        `type`="number"),
+                    list(
+                        `name`="ci.lower", 
+                        `title`="ci.lwr", 
+                        `type`="number"),
+                    list(
+                        `name`="ci.upper", 
+                        `title`="ci.upr", 
+                        `type`="number"),
+                    list(
+                        `name`="std.lv", 
+                        `title`="Std.lv", 
+                        `type`="number"),
+                    list(
+                        `name`="std.all", 
+                        `title`="Std.all", 
+                        `type`="number"))))
+            self$add(jmvcore::Table$new(
+                options=options,
                 name="variances",
                 title="(Error) variances",
                 rows=0,
@@ -554,6 +633,8 @@ riclpmBase <- if (requireNamespace('jmvcore')) R6::R6Class(
 #' @param data the data as a data frame
 #' @param factors a list containing named lists that define the \code{label}
 #'   of the factor and the \code{vars} that belong to that factor
+#' @param show_schematic_plot .
+#' @param include_random_intercept .
 #' @param constrain_crosslagged .
 #' @param constrain_autoregressions .
 #' @param constrain_latent_variances .
@@ -570,11 +651,13 @@ riclpmBase <- if (requireNamespace('jmvcore')) R6::R6Class(
 #' \tabular{llllll}{
 #'   \code{results$factor_definitions} \tab \tab \tab \tab \tab a table \cr
 #'   \code{results$lavaan_warnings} \tab \tab \tab \tab \tab a table \cr
+#'   \code{results$schematic_plot} \tab \tab \tab \tab \tab an image \cr
 #'   \code{results$latent_variables} \tab \tab \tab \tab \tab a table \cr
 #'   \code{results$random_intercept_latent_variables} \tab \tab \tab \tab \tab a table \cr
 #'   \code{results$autolagged_paths} \tab \tab \tab \tab \tab a table \cr
 #'   \code{results$crosslagged_paths} \tab \tab \tab \tab \tab a table \cr
 #'   \code{results$covariances} \tab \tab \tab \tab \tab a table \cr
+#'   \code{results$intercepts} \tab \tab \tab \tab \tab a table \cr
 #'   \code{results$variances} \tab \tab \tab \tab \tab a table \cr
 #'   \code{results$lavaan_output} \tab \tab \tab \tab \tab a preformatted \cr
 #'   \code{results$lavaan_syntax} \tab \tab \tab \tab \tab a preformatted \cr
@@ -592,6 +675,8 @@ riclpm <- function(
     factors = list(
                 list(label="X", vars=list()),
                 list(label="Y", vars=list())),
+    show_schematic_plot = TRUE,
+    include_random_intercept = FALSE,
     constrain_crosslagged = FALSE,
     constrain_autoregressions = FALSE,
     constrain_latent_variances = FALSE,
@@ -615,6 +700,8 @@ riclpm <- function(
 
     options <- riclpmOptions$new(
         factors = factors,
+        show_schematic_plot = show_schematic_plot,
+        include_random_intercept = include_random_intercept,
         constrain_crosslagged = constrain_crosslagged,
         constrain_autoregressions = constrain_autoregressions,
         constrain_latent_variances = constrain_latent_variances,

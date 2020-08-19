@@ -1,11 +1,11 @@
 ---
-title: What the Package Does (Title Case)
+title: Longitudinal Structural Equation Modeling
 name: longsem
 version: 0.0.1
 jms: '1.0'
 authors:
-  - Who wrote it
-maintainer: The package maintainer <yourself@somewhere.net>
+  - Frank Gootjes
+maintainer: Frank Gootjes <Gootjes@users.noreply.github.com>
 date: '1970-01-01'
 type: R
 description: >-

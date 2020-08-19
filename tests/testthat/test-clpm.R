@@ -32,7 +32,6 @@ test_that("we can run a lavaan model #1", {
                                                 constrain_autoregressions = F,
                                                 constrain_crosslagged = F,
                                                 constrain_observed_errors = F,
-                                                constrain_latent_variance_min_1 = T,
                                                 constrain_covariances = F,
                                                 factor_names = c("x", "y")),
                    data = data

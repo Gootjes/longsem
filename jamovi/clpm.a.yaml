@@ -35,6 +35,11 @@ options:
             a list containing named lists that define the `label` of
             the factor and the `vars` that belong to that factor
 
+    - name: show_schematic_plot
+      title: Show schematic plot
+      type: Bool
+      default: true
+
     - name: constrain_crosslagged
       title: Constrain crosslagged paths
       type: Bool
@@ -90,8 +95,4 @@ options:
           name: listwise
       default: listwise
 
-    - name: show_schematic_plot
-      title: Show schematic
-      type: Bool
-      default: true
 ...

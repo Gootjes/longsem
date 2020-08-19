@@ -88,9 +88,15 @@ clpmClass <- if (requireNamespace('jmvcore')) R6::R6Class(
             lavaan_syntax <- self$results$lavaan_syntax
             lavaan_syntax$setContent(m)
 
-            p <- self$results$schematic_plot
-            p$setSize(width = max(c(600, 200*factor_lengths[[1]])), height = 400)
-            p$setState(make_schematic(n_waves = factor_lengths[[1]], n_factors = length(factors), return_spec = T))
+            if(self$options$show_schematic_plot) {
+                p <- self$results$schematic_plot
+                p$setSize(width = max(c(600, 200*factor_lengths[[1]])), height = 600)
+                p$setState(make_schematic(n_waves = factor_lengths[[1]], n_factors = length(factors), return_spec = T,
+                                          constrain_autoregressions = self$options$constrain_autoregressions,
+                                          constrain_crosslagged = self$options$constrain_crosslagged,
+                                          constrain_covariances = self$options$constrain_covariances))
+            }
+
 
         },
         .cleanData = function() {

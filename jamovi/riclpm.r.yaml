@@ -30,6 +30,12 @@ items:
           type: Text
           content: No warnings from lavaan!
 
+    - name: schematic_plot
+      title: Schematic
+      type: Image
+      visible: (show_schematic_plot)
+      renderFun: .plotSchematic
+
     - name: latent_variables
       title: Latent variables
       type: Table
@@ -77,6 +83,7 @@ items:
       type: Table
       rows: 0
       columns: *idcols
+      visible: (include_random_intercept)
 
     - name: autolagged_paths
       title: "Autolagged paths"
@@ -92,6 +99,12 @@ items:
 
     - name: covariances
       title: "Covariances"
+      type: Table
+      rows: 0
+      columns: *idcols
+
+    - name: intercepts
+      title: "Intercepts"
       type: Table
       rows: 0
       columns: *idcols

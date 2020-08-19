@@ -9,6 +9,7 @@ clpmOptions <- if (requireNamespace('jmvcore')) R6::R6Class(
             factors = list(
                 list(label="X", vars=list()),
                 list(label="Y", vars=list())),
+            show_schematic_plot = TRUE,
             constrain_crosslagged = FALSE,
             constrain_autoregressions = FALSE,
             constrain_latent_variances = FALSE,
@@ -18,8 +19,7 @@ clpmOptions <- if (requireNamespace('jmvcore')) R6::R6Class(
             estimate_observed_errors = FALSE,
             estimate_latent_intercepts = FALSE,
             show_lavaan_syntax = FALSE,
-            missing_data_treatment = "listwise",
-            show_schematic_plot = TRUE, ...) {
+            missing_data_treatment = "listwise", ...) {
 
             super$initialize(
                 package='longsem',
@@ -47,6 +47,10 @@ clpmOptions <- if (requireNamespace('jmvcore')) R6::R6Class(
                                 "continuous"),
                             permitted=list(
                                 "numeric")))))
+            private$..show_schematic_plot <- jmvcore::OptionBool$new(
+                "show_schematic_plot",
+                show_schematic_plot,
+                default=TRUE)
             private$..constrain_crosslagged <- jmvcore::OptionBool$new(
                 "constrain_crosslagged",
                 constrain_crosslagged,
@@ -90,12 +94,9 @@ clpmOptions <- if (requireNamespace('jmvcore')) R6::R6Class(
                     "ml",
                     "listwise"),
                 default="listwise")
-            private$..show_schematic_plot <- jmvcore::OptionBool$new(
-                "show_schematic_plot",
-                show_schematic_plot,
-                default=TRUE)
 
             self$.addOption(private$..factors)
+            self$.addOption(private$..show_schematic_plot)
             self$.addOption(private$..constrain_crosslagged)
             self$.addOption(private$..constrain_autoregressions)
             self$.addOption(private$..constrain_latent_variances)
@@ -106,10 +107,10 @@ clpmOptions <- if (requireNamespace('jmvcore')) R6::R6Class(
             self$.addOption(private$..estimate_latent_intercepts)
             self$.addOption(private$..show_lavaan_syntax)
             self$.addOption(private$..missing_data_treatment)
-            self$.addOption(private$..show_schematic_plot)
         }),
     active = list(
         factors = function() private$..factors$value,
+        show_schematic_plot = function() private$..show_schematic_plot$value,
         constrain_crosslagged = function() private$..constrain_crosslagged$value,
         constrain_autoregressions = function() private$..constrain_autoregressions$value,
         constrain_latent_variances = function() private$..constrain_latent_variances$value,
@@ -119,10 +120,10 @@ clpmOptions <- if (requireNamespace('jmvcore')) R6::R6Class(
         estimate_observed_errors = function() private$..estimate_observed_errors$value,
         estimate_latent_intercepts = function() private$..estimate_latent_intercepts$value,
         show_lavaan_syntax = function() private$..show_lavaan_syntax$value,
-        missing_data_treatment = function() private$..missing_data_treatment$value,
-        show_schematic_plot = function() private$..show_schematic_plot$value),
+        missing_data_treatment = function() private$..missing_data_treatment$value),
     private = list(
         ..factors = NA,
+        ..show_schematic_plot = NA,
         ..constrain_crosslagged = NA,
         ..constrain_autoregressions = NA,
         ..constrain_latent_variances = NA,
@@ -132,17 +133,16 @@ clpmOptions <- if (requireNamespace('jmvcore')) R6::R6Class(
         ..estimate_observed_errors = NA,
         ..estimate_latent_intercepts = NA,
         ..show_lavaan_syntax = NA,
-        ..missing_data_treatment = NA,
-        ..show_schematic_plot = NA)
+        ..missing_data_treatment = NA)
 )
 
 clpmResults <- if (requireNamespace('jmvcore')) R6::R6Class(
     inherit = jmvcore::Group,
     active = list(
         lavaan_warnings = function() private$.items[["lavaan_warnings"]],
+        schematic_plot = function() private$.items[["schematic_plot"]],
         text = function() private$.items[["text"]],
-        lavaan_syntax = function() private$.items[["lavaan_syntax"]],
-        schematic_plot = function() private$.items[["schematic_plot"]]),
+        lavaan_syntax = function() private$.items[["lavaan_syntax"]]),
     private = list(),
     public=list(
         initialize=function(options) {
@@ -161,6 +161,12 @@ clpmResults <- if (requireNamespace('jmvcore')) R6::R6Class(
                         `title`="Warnings", 
                         `type`="text", 
                         `content`="No warnings from lavaan!"))))
+            self$add(jmvcore::Image$new(
+                options=options,
+                name="schematic_plot",
+                title="Schematic",
+                visible="(show_schematic_plot)",
+                renderFun=".plotSchematic"))
             self$add(jmvcore::Preformatted$new(
                 options=options,
                 name="text",
@@ -169,13 +175,7 @@ clpmResults <- if (requireNamespace('jmvcore')) R6::R6Class(
                 options=options,
                 name="lavaan_syntax",
                 title="Syntax",
-                visible="(show_lavaan_syntax)"))
-            self$add(jmvcore::Image$new(
-                options=options,
-                name="schematic_plot",
-                title="Schematic",
-                visible="(show_schematic_plot)",
-                renderFun=".plotSchematic"))}))
+                visible="(show_lavaan_syntax)"))}))
 
 clpmBase <- if (requireNamespace('jmvcore')) R6::R6Class(
     "clpmBase",
@@ -203,6 +203,7 @@ clpmBase <- if (requireNamespace('jmvcore')) R6::R6Class(
 #' @param data the data as a data frame
 #' @param factors a list containing named lists that define the \code{label}
 #'   of the factor and the \code{vars} that belong to that factor
+#' @param show_schematic_plot .
 #' @param constrain_crosslagged .
 #' @param constrain_autoregressions .
 #' @param constrain_latent_variances .
@@ -213,13 +214,12 @@ clpmBase <- if (requireNamespace('jmvcore')) R6::R6Class(
 #' @param estimate_latent_intercepts .
 #' @param show_lavaan_syntax .
 #' @param missing_data_treatment .
-#' @param show_schematic_plot .
 #' @return A results object containing:
 #' \tabular{llllll}{
 #'   \code{results$lavaan_warnings} \tab \tab \tab \tab \tab a table \cr
+#'   \code{results$schematic_plot} \tab \tab \tab \tab \tab an image \cr
 #'   \code{results$text} \tab \tab \tab \tab \tab a preformatted \cr
 #'   \code{results$lavaan_syntax} \tab \tab \tab \tab \tab a preformatted \cr
-#'   \code{results$schematic_plot} \tab \tab \tab \tab \tab an image \cr
 #' }
 #'
 #' Tables can be converted to data frames with \code{asDF} or \code{\link{as.data.frame}}. For example:
@@ -234,6 +234,7 @@ clpm <- function(
     factors = list(
                 list(label="X", vars=list()),
                 list(label="Y", vars=list())),
+    show_schematic_plot = TRUE,
     constrain_crosslagged = FALSE,
     constrain_autoregressions = FALSE,
     constrain_latent_variances = FALSE,
@@ -243,8 +244,7 @@ clpm <- function(
     estimate_observed_errors = FALSE,
     estimate_latent_intercepts = FALSE,
     show_lavaan_syntax = FALSE,
-    missing_data_treatment = "listwise",
-    show_schematic_plot = TRUE) {
+    missing_data_treatment = "listwise") {
 
     if ( ! requireNamespace('jmvcore'))
         stop('clpm requires jmvcore to be installed (restart may be required)')
@@ -256,6 +256,7 @@ clpm <- function(
 
     options <- clpmOptions$new(
         factors = factors,
+        show_schematic_plot = show_schematic_plot,
         constrain_crosslagged = constrain_crosslagged,
         constrain_autoregressions = constrain_autoregressions,
         constrain_latent_variances = constrain_latent_variances,
@@ -265,8 +266,7 @@ clpm <- function(
         estimate_observed_errors = estimate_observed_errors,
         estimate_latent_intercepts = estimate_latent_intercepts,
         show_lavaan_syntax = show_lavaan_syntax,
-        missing_data_treatment = missing_data_treatment,
-        show_schematic_plot = show_schematic_plot)
+        missing_data_treatment = missing_data_treatment)
 
     analysis <- clpmClass$new(
         options = options,
