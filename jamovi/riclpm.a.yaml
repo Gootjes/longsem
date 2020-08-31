@@ -55,8 +55,8 @@ options:
       type: Bool
       default: false
 
-    - name: constrain_latent_variances
-      title: Constrain latent variances
+    - name: constrain_residual_variances
+      title: Constrain residual variances
       type: Bool
       default: false
 
@@ -67,6 +67,11 @@ options:
 
     - name: constrain_covariances
       title: Constrain covariances
+      type: Bool
+      default: false
+
+    - name: constrain_intercepts_over_time
+      title: Constrain intercepts over time
       type: Bool
       default: false
 
@@ -87,6 +92,11 @@ options:
 
     - name: estimate_intercepts_intercepts
       title: Estimate RI intercept
+      type: Bool
+      default: false
+
+    - name: fix_random_intercept_first_wave_covariance_to_zero
+      title: Fix random intercept first wave covariance to zero
       type: Bool
       default: false
 

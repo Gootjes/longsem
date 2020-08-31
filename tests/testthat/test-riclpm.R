@@ -1,6 +1,6 @@
 test_that("riclpm works", {
   expect_silent({
-    data("Fakedata_RI-CLPM_R", package = "riclpm")
+    data("Fakedata_RI-CLPM_R", package = "longsem")
     data <- `Fakedata_RI-CLPM_R`
     riclpm(data = data, factors = list(list(
       label = "x", vars = list("x1", "x2", "x3", "x4")
@@ -24,7 +24,8 @@ test_that("we can replicate Flournoy", {
                                                           constrain_crosslagged = F,
                                                           estimate_observed_intercepts = T,
                                                           estimate_intercepts_intercepts = F,
-                                                          constrain_covariances = F),
+                                                          constrain_covariances = F,
+                                                          fix_random_intercept_first_wave_covariance_to_zero = T),
                            data = data,
                            missing = 'ML',
                            int.ov.free = F,
@@ -55,7 +56,7 @@ test_that("we can replicate Flournoy", {
       sort(round(f1_p[order(f1_p$lhs, f1_p$op, f1_p$rhs),"est"], 3))
     },
     expected = {
-      data("antiread", package = "riclpm")
+      data("antiread", package = "longsem")
       data <- antiread
       names(data) <- gsub(pattern = "^anti([0-9])$", replacement = "x\\1", x = names(data))
       names(data) <- gsub(pattern = "^read([0-9])$", replacement = "y\\1", x = names(data))

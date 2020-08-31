@@ -1,0 +1,3 @@
+[submodule "tests\\testthat\\ellenhamaker\\RI-CLPM"]
+	path = tests\\testthat\\ellenhamaker\\RI-CLPM
+	url = https://github.com/ellenhamaker/RI-CLPM

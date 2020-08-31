@@ -61,23 +61,26 @@ riclpmClass <- if (requireNamespace('jmvcore')) R6::R6Class(
                                             constrain_autoregressions = self$options$constrain_autoregressions,
                                             constrain_crosslagged = self$options$constrain_crosslagged,
                                             constrain_observed_errors = self$options$constrain_observed_errors,
-                                            constrain_latent_variance_min_1 = self$options$constrain_latent_variances,
+                                            constrain_residual_variances = self$options$constrain_residual_variances,
                                             constrain_covariances = self$options$constrain_covariances,
                                             estimate_observed_intercepts = self$options$estimate_observed_intercepts,
                                             estimate_observed_errors = self$options$estimate_observed_errors,
                                             estimate_latent_intercepts = self$options$estimate_latent_intercepts,
-                                            estimate_intercepts_intercepts = self$options$estimate_intercepts_intercepts)
+                                            estimate_intercepts_intercepts = self$options$estimate_intercepts_intercepts,
+                                            constrain_intercepts_over_time = self$options$constrain_intercepts_over_time,
+                                            fix_random_intercept_first_wave_covariance_to_zero = self$options$fix_random_intercept_first_wave_covariance_to_zero)
             } else {
                 m <- generate_clpm_syntax(factor_length = factor_lengths[1],
                                             nfactors = length(factors),
                                             constrain_autoregressions = self$options$constrain_autoregressions,
                                             constrain_crosslagged = self$options$constrain_crosslagged,
                                             constrain_observed_errors = self$options$constrain_observed_errors,
-                                            constrain_latent_variance_min_1 = self$options$constrain_latent_variances,
+                                            constrain_residual_variances = self$options$constrain_residual_variances,
                                             constrain_covariances = self$options$constrain_covariances,
                                             estimate_observed_intercepts = self$options$estimate_observed_intercepts,
                                             estimate_observed_errors = self$options$estimate_observed_errors,
-                                            estimate_latent_intercepts = self$options$estimate_latent_intercepts)
+                                            estimate_latent_intercepts = self$options$estimate_latent_intercepts,
+                                            constrain_intercepts_over_time = self$options$constrain_intercepts_over_time)
             }
 
 

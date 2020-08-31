@@ -50,7 +50,9 @@ children:
       - type: CheckBox
         name: estimate_intercepts_intercepts
       - type: CheckBox
-        name: constrain_latent_variances
+        name: constrain_residual_variances
+      - type: CheckBox
+        name: fix_random_intercept_first_wave_covariance_to_zero
       - type: CheckBox
         name: estimate_observed_intercepts
       - type: CheckBox
@@ -61,6 +63,8 @@ children:
         name: constrain_covariances
       - type: CheckBox
         name: estimate_latent_intercepts
+      - type: CheckBox
+        name: constrain_intercepts_over_time
       - type: CheckBox
         name: show_lavaan_syntax
       - type: CheckBox

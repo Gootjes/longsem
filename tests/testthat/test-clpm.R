@@ -1,6 +1,6 @@
 test_that("clpm works", {
   expect_silent({
-    data("Fakedata_RI-CLPM_R", package = "riclpm")
+    data("Fakedata_RI-CLPM_R", package = "longsem")
     data <- `Fakedata_RI-CLPM_R`
     clpm(data = data, factors = list(list(
       label = "x", vars = list("x1", "x2", "x3", "x4")
@@ -25,7 +25,7 @@ test_that("generated syntax is sensible", {
 
 test_that("we can run a lavaan model #1", {
   expect_silent({
-    data("Fakedata_RI-CLPM_R", package = "riclpm")
+    data("Fakedata_RI-CLPM_R", package = "longsem")
     data <- `Fakedata_RI-CLPM_R`
     lavaan::lavaan(model = generate_clpm_syntax(factor_length = 4,
                                                 nfactors = 2,
@@ -43,7 +43,7 @@ test_that("we can run a lavaan model #1", {
 
 test_that("we can run a lavaan model #2", {
   expect_silent({
-    data("Fakedata_RI-CLPM_R", package = "riclpm")
+    data("Fakedata_RI-CLPM_R", package = "longsem")
     data <- `Fakedata_RI-CLPM_R`
     lavaan::lavaan(model = generate_clpm_syntax(factor_length = 3,
                                                 nfactors = 2,
@@ -69,7 +69,7 @@ test_that("we can run a lavaan model #2", {
 
 test_that("we can reproduce Flournoy's CLPM", {
   expect_equal(object = {
-    data("antiread", package = "riclpm")
+    data("antiread", package = "longsem")
     data <- antiread
     names(data) <- gsub(pattern = "^anti([0-9])$", replacement = "x\\1", x = names(data))
     names(data) <- gsub(pattern = "^read([0-9])$", replacement = "y\\1", x = names(data))
@@ -108,7 +108,7 @@ test_that("we can reproduce Flournoy's CLPM", {
   },
   expected = {
 
-    data("antiread", package = "riclpm")
+    data("antiread", package = "longsem")
 
     data <- antiread
     names(data) <- gsub(pattern = "^anti([0-9])$", replacement = "x\\1", x = names(data))

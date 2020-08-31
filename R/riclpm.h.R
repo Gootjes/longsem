@@ -13,13 +13,15 @@ riclpmOptions <- if (requireNamespace('jmvcore')) R6::R6Class(
             include_random_intercept = FALSE,
             constrain_crosslagged = FALSE,
             constrain_autoregressions = FALSE,
-            constrain_latent_variances = FALSE,
+            constrain_residual_variances = FALSE,
             constrain_observed_errors = FALSE,
             constrain_covariances = FALSE,
+            constrain_intercepts_over_time = FALSE,
             estimate_observed_intercepts = TRUE,
             estimate_observed_errors = FALSE,
             estimate_latent_intercepts = FALSE,
             estimate_intercepts_intercepts = FALSE,
+            fix_random_intercept_first_wave_covariance_to_zero = FALSE,
             show_lavaan_syntax = FALSE,
             show_lavaan_output = FALSE,
             missing_data_treatment = "listwise", ...) {
@@ -66,9 +68,9 @@ riclpmOptions <- if (requireNamespace('jmvcore')) R6::R6Class(
                 "constrain_autoregressions",
                 constrain_autoregressions,
                 default=FALSE)
-            private$..constrain_latent_variances <- jmvcore::OptionBool$new(
-                "constrain_latent_variances",
-                constrain_latent_variances,
+            private$..constrain_residual_variances <- jmvcore::OptionBool$new(
+                "constrain_residual_variances",
+                constrain_residual_variances,
                 default=FALSE)
             private$..constrain_observed_errors <- jmvcore::OptionBool$new(
                 "constrain_observed_errors",
@@ -77,6 +79,10 @@ riclpmOptions <- if (requireNamespace('jmvcore')) R6::R6Class(
             private$..constrain_covariances <- jmvcore::OptionBool$new(
                 "constrain_covariances",
                 constrain_covariances,
+                default=FALSE)
+            private$..constrain_intercepts_over_time <- jmvcore::OptionBool$new(
+                "constrain_intercepts_over_time",
+                constrain_intercepts_over_time,
                 default=FALSE)
             private$..estimate_observed_intercepts <- jmvcore::OptionBool$new(
                 "estimate_observed_intercepts",
@@ -93,6 +99,10 @@ riclpmOptions <- if (requireNamespace('jmvcore')) R6::R6Class(
             private$..estimate_intercepts_intercepts <- jmvcore::OptionBool$new(
                 "estimate_intercepts_intercepts",
                 estimate_intercepts_intercepts,
+                default=FALSE)
+            private$..fix_random_intercept_first_wave_covariance_to_zero <- jmvcore::OptionBool$new(
+                "fix_random_intercept_first_wave_covariance_to_zero",
+                fix_random_intercept_first_wave_covariance_to_zero,
                 default=FALSE)
             private$..show_lavaan_syntax <- jmvcore::OptionBool$new(
                 "show_lavaan_syntax",
@@ -115,13 +125,15 @@ riclpmOptions <- if (requireNamespace('jmvcore')) R6::R6Class(
             self$.addOption(private$..include_random_intercept)
             self$.addOption(private$..constrain_crosslagged)
             self$.addOption(private$..constrain_autoregressions)
-            self$.addOption(private$..constrain_latent_variances)
+            self$.addOption(private$..constrain_residual_variances)
             self$.addOption(private$..constrain_observed_errors)
             self$.addOption(private$..constrain_covariances)
+            self$.addOption(private$..constrain_intercepts_over_time)
             self$.addOption(private$..estimate_observed_intercepts)
             self$.addOption(private$..estimate_observed_errors)
             self$.addOption(private$..estimate_latent_intercepts)
             self$.addOption(private$..estimate_intercepts_intercepts)
+            self$.addOption(private$..fix_random_intercept_first_wave_covariance_to_zero)
             self$.addOption(private$..show_lavaan_syntax)
             self$.addOption(private$..show_lavaan_output)
             self$.addOption(private$..missing_data_treatment)
@@ -132,13 +144,15 @@ riclpmOptions <- if (requireNamespace('jmvcore')) R6::R6Class(
         include_random_intercept = function() private$..include_random_intercept$value,
         constrain_crosslagged = function() private$..constrain_crosslagged$value,
         constrain_autoregressions = function() private$..constrain_autoregressions$value,
-        constrain_latent_variances = function() private$..constrain_latent_variances$value,
+        constrain_residual_variances = function() private$..constrain_residual_variances$value,
         constrain_observed_errors = function() private$..constrain_observed_errors$value,
         constrain_covariances = function() private$..constrain_covariances$value,
+        constrain_intercepts_over_time = function() private$..constrain_intercepts_over_time$value,
         estimate_observed_intercepts = function() private$..estimate_observed_intercepts$value,
         estimate_observed_errors = function() private$..estimate_observed_errors$value,
         estimate_latent_intercepts = function() private$..estimate_latent_intercepts$value,
         estimate_intercepts_intercepts = function() private$..estimate_intercepts_intercepts$value,
+        fix_random_intercept_first_wave_covariance_to_zero = function() private$..fix_random_intercept_first_wave_covariance_to_zero$value,
         show_lavaan_syntax = function() private$..show_lavaan_syntax$value,
         show_lavaan_output = function() private$..show_lavaan_output$value,
         missing_data_treatment = function() private$..missing_data_treatment$value),
@@ -148,13 +162,15 @@ riclpmOptions <- if (requireNamespace('jmvcore')) R6::R6Class(
         ..include_random_intercept = NA,
         ..constrain_crosslagged = NA,
         ..constrain_autoregressions = NA,
-        ..constrain_latent_variances = NA,
+        ..constrain_residual_variances = NA,
         ..constrain_observed_errors = NA,
         ..constrain_covariances = NA,
+        ..constrain_intercepts_over_time = NA,
         ..estimate_observed_intercepts = NA,
         ..estimate_observed_errors = NA,
         ..estimate_latent_intercepts = NA,
         ..estimate_intercepts_intercepts = NA,
+        ..fix_random_intercept_first_wave_covariance_to_zero = NA,
         ..show_lavaan_syntax = NA,
         ..show_lavaan_output = NA,
         ..missing_data_treatment = NA)
@@ -637,13 +653,15 @@ riclpmBase <- if (requireNamespace('jmvcore')) R6::R6Class(
 #' @param include_random_intercept .
 #' @param constrain_crosslagged .
 #' @param constrain_autoregressions .
-#' @param constrain_latent_variances .
+#' @param constrain_residual_variances .
 #' @param constrain_observed_errors .
 #' @param constrain_covariances .
+#' @param constrain_intercepts_over_time .
 #' @param estimate_observed_intercepts .
 #' @param estimate_observed_errors .
 #' @param estimate_latent_intercepts .
 #' @param estimate_intercepts_intercepts .
+#' @param fix_random_intercept_first_wave_covariance_to_zero .
 #' @param show_lavaan_syntax .
 #' @param show_lavaan_output .
 #' @param missing_data_treatment .
@@ -679,13 +697,15 @@ riclpm <- function(
     include_random_intercept = FALSE,
     constrain_crosslagged = FALSE,
     constrain_autoregressions = FALSE,
-    constrain_latent_variances = FALSE,
+    constrain_residual_variances = FALSE,
     constrain_observed_errors = FALSE,
     constrain_covariances = FALSE,
+    constrain_intercepts_over_time = FALSE,
     estimate_observed_intercepts = TRUE,
     estimate_observed_errors = FALSE,
     estimate_latent_intercepts = FALSE,
     estimate_intercepts_intercepts = FALSE,
+    fix_random_intercept_first_wave_covariance_to_zero = FALSE,
     show_lavaan_syntax = FALSE,
     show_lavaan_output = FALSE,
     missing_data_treatment = "listwise") {
@@ -704,13 +724,15 @@ riclpm <- function(
         include_random_intercept = include_random_intercept,
         constrain_crosslagged = constrain_crosslagged,
         constrain_autoregressions = constrain_autoregressions,
-        constrain_latent_variances = constrain_latent_variances,
+        constrain_residual_variances = constrain_residual_variances,
         constrain_observed_errors = constrain_observed_errors,
         constrain_covariances = constrain_covariances,
+        constrain_intercepts_over_time = constrain_intercepts_over_time,
         estimate_observed_intercepts = estimate_observed_intercepts,
         estimate_observed_errors = estimate_observed_errors,
         estimate_latent_intercepts = estimate_latent_intercepts,
         estimate_intercepts_intercepts = estimate_intercepts_intercepts,
+        fix_random_intercept_first_wave_covariance_to_zero = fix_random_intercept_first_wave_covariance_to_zero,
         show_lavaan_syntax = show_lavaan_syntax,
         show_lavaan_output = show_lavaan_output,
         missing_data_treatment = missing_data_treatment)

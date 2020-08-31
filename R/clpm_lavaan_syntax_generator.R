@@ -6,11 +6,12 @@ generate_clpm_syntax <-
            constrain_autoregressions = F,
            constrain_crosslagged = F,
            constrain_observed_errors = F,
-           constrain_latent_variance_min_1 = F,
+           constrain_residual_variances = F,
            constrain_covariances = F,
            estimate_observed_intercepts = F,
            estimate_observed_errors = F,
-           estimate_latent_intercepts = F) {
+           estimate_latent_intercepts = F,
+           constrain_intercepts_over_time = F) {
     # Reference source: https://osf.io/a4wtz/
     # Data source: https://osf.io/a4wtz/
 
@@ -98,7 +99,7 @@ generate_clpm_syntax <-
     }
 
 
-    if (constrain_latent_variance_min_1) {
+    if (constrain_residual_variances) {
       latent_variances_min_1 <-
         glue_data(vs_min_1, "eta{var}{wave} ~~ v{var}*eta{var}{wave}")
     } else {
@@ -148,13 +149,23 @@ generate_clpm_syntax <-
       )
 
     if(estimate_observed_intercepts) {
-      intercepts_observed <- glue_data(vs, "{var}{wave} ~ i{var}{wave}*1")
+      if(constrain_intercepts_over_time) {
+        intercepts_observed <- glue_data(vs, "{var}{wave} ~ i{var}*1")
+      } else {
+        intercepts_observed <- glue_data(vs, "{var}{wave} ~ i{var}{wave}*1")
+      }
+
     } else {
       intercepts_observed <- glue_data(vs, "{var}{wave} ~ 0*1")
     }
 
     if(estimate_latent_intercepts) {
-      intercepts_latent <- glue_data(vs, "eta{var}{wave} ~ 1")
+      if(constrain_intercepts_over_time) {
+        intercepts_latent <- glue_data(vs, "eta{var}{wave} ~ ieta{var}*1")
+      } else {
+        intercepts_latent <- glue_data(vs, "eta{var}{wave} ~ ieta{var}{wave}*1")
+      }
+
     } else {
       intercepts_latent <- glue_data(vs, "eta{var}{wave} ~ 0*1")
     }
@@ -173,7 +184,7 @@ generate_clpm_syntax <-
     # } else {
     #   vs_wide_min_1$label <- glue_data(vs_wide_min_1, "e{wave}")
     # }
-    if (constrain_latent_variance_min_1) {
+    if (constrain_residual_variances) {
       if(constrain_covariances) {
         computed_cove <-
           glue_data(
@@ -230,12 +241,14 @@ generate_riclpm_syntax <- function(factor_length = 4,
                                    constrain_autoregressions = F,
                                    constrain_crosslagged = F,
                                    constrain_observed_errors = F,
-                                   constrain_latent_variance_min_1 = F,
+                                   constrain_residual_variances = F,
                                    constrain_covariances = F,
                                    estimate_observed_intercepts = F,
                                    estimate_observed_errors = F,
                                    estimate_latent_intercepts = F,
-                                   estimate_intercepts_intercepts = FALSE) {
+                                   estimate_intercepts_intercepts = F,
+                                   fix_random_intercept_first_wave_covariance_to_zero = F,
+                                   constrain_intercepts_over_time = F) {
 
   clpm_syntax <- generate_clpm_syntax(factor_length = factor_length,
                                       nfactors = nfactors,
@@ -243,11 +256,12 @@ generate_riclpm_syntax <- function(factor_length = 4,
                                       constrain_autoregressions = constrain_autoregressions,
                                       constrain_crosslagged = constrain_crosslagged,
                                       constrain_observed_errors = constrain_observed_errors,
-                                      constrain_latent_variance_min_1 = constrain_latent_variance_min_1,
+                                      constrain_residual_variances = constrain_residual_variances,
                                       constrain_covariances = constrain_covariances,
                                       estimate_observed_intercepts = estimate_observed_intercepts,
                                       estimate_observed_errors = estimate_observed_errors,
-                                      estimate_latent_intercepts = estimate_latent_intercepts)
+                                      estimate_latent_intercepts = estimate_latent_intercepts,
+                                      constrain_intercepts_over_time = constrain_intercepts_over_time)
 
   falongs <- 1:factor_length
 
@@ -283,8 +297,14 @@ generate_riclpm_syntax <- function(factor_length = 4,
   intercept_covariances <- glue_data(i_pairs,
                                      "i{var1} ~~ covi{var1}{var2}*i{var2}")
 
-  intercept_covariances_1 <- glue_data(expand.grid(var1 = factor_names, var2 = factor_names),
-                                       "eta{var1}1 ~~ 0*i{var2}")
+  if(fix_random_intercept_first_wave_covariance_to_zero) {
+    intercept_covariances_1 <- glue_data(expand.grid(var1 = factor_names, var2 = factor_names),
+                                         "eta{var1}1 ~~ 0*i{var2}")
+  } else {
+    intercept_covariances_1 <- ""
+  }
+
+
 
   if(estimate_intercepts_intercepts) {
     intercept_intercepts <- glue(var = factor_names, "i{var} ~ 1")
