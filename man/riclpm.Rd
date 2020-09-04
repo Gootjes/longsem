@@ -7,12 +7,21 @@
 riclpm(
   data,
   factors = list(list(label = "X", vars = list()), list(label = "Y", vars = list())),
-  constrain_crosslagged = TRUE,
-  constrain_autoregressions = TRUE,
-  estimate_intercepts_intercepts = TRUE,
-  estimate_observed_intercepts = FALSE,
+  show_schematic_plot = TRUE,
+  include_random_intercept = FALSE,
+  constrain_crosslagged = FALSE,
+  constrain_autoregressions = FALSE,
+  constrain_residual_variances = FALSE,
+  constrain_observed_errors = FALSE,
   constrain_covariances = FALSE,
+  constrain_intercepts_over_time = FALSE,
+  estimate_observed_intercepts = TRUE,
+  estimate_observed_errors = FALSE,
+  estimate_latent_intercepts = FALSE,
+  estimate_intercepts_intercepts = FALSE,
+  fix_random_intercept_first_wave_covariance_to_zero = FALSE,
   show_lavaan_syntax = FALSE,
+  show_lavaan_output = FALSE,
   missing_data_treatment = "listwise"
 )
 }
@@ -22,33 +31,60 @@ riclpm(
 \item{factors}{a list containing named lists that define the \code{label}
 of the factor and the \code{vars} that belong to that factor}
 
+\item{show_schematic_plot}{.}
+
+\item{include_random_intercept}{.}
+
 \item{constrain_crosslagged}{.}
 
 \item{constrain_autoregressions}{.}
 
-\item{estimate_intercepts_intercepts}{.}
+\item{constrain_residual_variances}{.}
 
-\item{estimate_observed_intercepts}{.}
+\item{constrain_observed_errors}{.}
 
 \item{constrain_covariances}{.}
 
+\item{constrain_intercepts_over_time}{.}
+
+\item{estimate_observed_intercepts}{.}
+
+\item{estimate_observed_errors}{.}
+
+\item{estimate_latent_intercepts}{.}
+
+\item{estimate_intercepts_intercepts}{.}
+
+\item{fix_random_intercept_first_wave_covariance_to_zero}{.}
+
 \item{show_lavaan_syntax}{.}
+
+\item{show_lavaan_output}{.}
 
 \item{missing_data_treatment}{.}
 }
 \value{
 A results object containing:
 \tabular{llllll}{
+  \code{results$factor_definitions} \tab \tab \tab \tab \tab a table \cr
   \code{results$lavaan_warnings} \tab \tab \tab \tab \tab a table \cr
-  \code{results$text} \tab \tab \tab \tab \tab a preformatted \cr
+  \code{results$schematic_plot} \tab \tab \tab \tab \tab an image \cr
+  \code{results$latent_variables} \tab \tab \tab \tab \tab a table \cr
+  \code{results$random_intercept_latent_variables} \tab \tab \tab \tab \tab a table \cr
+  \code{results$autolagged_paths} \tab \tab \tab \tab \tab a table \cr
+  \code{results$crosslagged_paths} \tab \tab \tab \tab \tab a table \cr
+  \code{results$covariances} \tab \tab \tab \tab \tab a table \cr
+  \code{results$intercepts} \tab \tab \tab \tab \tab a table \cr
+  \code{results$variances} \tab \tab \tab \tab \tab a table \cr
+  \code{results$lavaan_output} \tab \tab \tab \tab \tab a preformatted \cr
   \code{results$lavaan_syntax} \tab \tab \tab \tab \tab a preformatted \cr
 }
 
 Tables can be converted to data frames with \code{asDF} or \code{\link{as.data.frame}}. For example:
 
-\code{results$lavaan_warnings$asDF}
+\code{results$factor_definitions$asDF}
 
-\code{as.data.frame(results$lavaan_warnings)}
+\code{as.data.frame(results$factor_definitions)}
 }
 \description{
 Random Intercept CLPM

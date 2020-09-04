@@ -7,6 +7,7 @@
 clpm(
   data,
   factors = list(list(label = "X", vars = list()), list(label = "Y", vars = list())),
+  show_schematic_plot = TRUE,
   constrain_crosslagged = FALSE,
   constrain_autoregressions = FALSE,
   constrain_latent_variances = FALSE,
@@ -16,8 +17,7 @@ clpm(
   estimate_observed_errors = FALSE,
   estimate_latent_intercepts = FALSE,
   show_lavaan_syntax = FALSE,
-  missing_data_treatment = "listwise",
-  show_schematic_plot = TRUE
+  missing_data_treatment = "listwise"
 )
 }
 \arguments{
@@ -25,6 +25,8 @@ clpm(
 
 \item{factors}{a list containing named lists that define the \code{label}
 of the factor and the \code{vars} that belong to that factor}
+
+\item{show_schematic_plot}{.}
 
 \item{constrain_crosslagged}{.}
 
@@ -45,16 +47,14 @@ of the factor and the \code{vars} that belong to that factor}
 \item{show_lavaan_syntax}{.}
 
 \item{missing_data_treatment}{.}
-
-\item{show_schematic_plot}{.}
 }
 \value{
 A results object containing:
 \tabular{llllll}{
   \code{results$lavaan_warnings} \tab \tab \tab \tab \tab a table \cr
+  \code{results$schematic_plot} \tab \tab \tab \tab \tab an image \cr
   \code{results$text} \tab \tab \tab \tab \tab a preformatted \cr
   \code{results$lavaan_syntax} \tab \tab \tab \tab \tab a preformatted \cr
-  \code{results$schematic_plot} \tab \tab \tab \tab \tab an image \cr
 }
 
 Tables can be converted to data frames with \code{asDF} or \code{\link{as.data.frame}}. For example:

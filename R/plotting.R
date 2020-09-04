@@ -153,7 +153,7 @@ make_schematic <- function(n_waves = 4, n_factors = 2, factor_names = c("x", "y"
   d <- s[1,]
   a <- glue_data(d, "eta{factor1_name}{wave}")
   b <- glue_data(d, "eta{factor2_name}{wave}")
-  A[a,b] <- glue_data(d, "cove{factor2_name}{factor1_name}{wave}")
+  A[a,b] <- glue_data(d, "cov{factor2_name}{factor1_name}{wave}")
   A[b,a] <- ""
 
   s <- vs_wide_min_1[with(vs_wide_min_1, factor1 > factor2),]
@@ -182,6 +182,8 @@ make_schematic <- function(n_waves = 4, n_factors = 2, factor_names = c("x", "y"
                dtext = .6
                )
 
+  class(spec) <- c("longsem_schematic", class(spec))
+
   if(return_spec) {
     return(spec)
   }
@@ -190,4 +192,51 @@ make_schematic <- function(n_waves = 4, n_factors = 2, factor_names = c("x", "y"
 
 }
 
+#' @export
+#' @param values Should be a lavaan fit object
+update.longsem_schematic <- function(object, values, standardized = FALSE) {
+  est <- lavaan::parameterEstimates(object = values, standardized = standardized, pvalue = TRUE)
 
+  rel_est <- est[with(est, stringr::str_starts(label, "(a|c|cov|cove)[xy]")),]
+
+  if(standardized) {
+    est_values <- rel_est$std.all
+  } else {
+    est_values <- rel_est$est
+  }
+
+  p_values <- rel_est$pvalue
+
+  path_labels <- rel_est$label
+
+  formatted_values <- sapply(X = seq_along(est_values), FUN = function(i) {
+    v <- est_values[i]
+    p <- p_values[i]
+    stars <- ""
+    if(p < .001) {
+      stars <- "" # "***"
+    } else if(p < .01) {
+      stars <- "" # "**"
+    } else if(p < .05) {
+      stars <- "" # "*"
+    } else {
+      stars <- ""
+    }
+
+    paste(format(round(v, 2), nsmall = 2), stars, sep="")
+  })
+
+  for(i in seq_along(formatted_values)) {
+    lab <- path_labels[i]
+    v <- formatted_values[i]
+
+    object$A[object$A == lab] <- v
+  }
+
+  object
+}
+
+#' @export
+plot.longsem_schematic <- function(x) {
+  do.call(diagram::plotmat, x)
+}
