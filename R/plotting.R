@@ -8,7 +8,7 @@ make_schematic <- function(n_waves = 4, n_factors = 2, factor_names = c("x", "y"
                            constrain_crosslagged = F,
                            constrain_covariances = F,
                            include_random_intercept = F,
-                           constrain_latent_variances = F) {
+                           constrain_residual_variances = F) {
 
   if(n_factors != 2) {
     stop(glue("schematic not supported for any other number of factors ({n_factors}) than 2"))

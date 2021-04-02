@@ -40,7 +40,7 @@ clpmClass <- if (requireNamespace('jmvcore')) R6::R6Class(
                                       constrain_autoregressions = self$options$constrain_autoregressions,
                                       constrain_crosslagged = self$options$constrain_crosslagged,
                                       constrain_observed_errors = self$options$constrain_observed_errors,
-                                      constrain_latent_variance_min_1 = self$options$constrain_latent_variances,
+                                      constrain_residual_variances = self$options$constrain_residual_variances,
                                       constrain_covariances = self$options$constrain_covariances,
                                       estimate_observed_intercepts = self$options$estimate_observed_intercepts,
                                       estimate_observed_errors = self$options$estimate_observed_errors,

@@ -46,7 +46,7 @@ test_that("we can run a basic RICLPM equivalent to Hamaker spec", {
   my_RICLPM_fit <- fit_model(generate_riclpm_syntax(nfactors = 2, factor_length = 5,
                                                     estimate_observed_intercepts = T))
 
-  test_equivalence(eh_RICLPM_fit, my_RICLPM_fit)
+  test_equivalence(eh_RICLPM_fit, my_RICLPM_fit, accuracy = 5)
 })
 
 test_that("we can run a basic CLPM equivalent to Hamaker spec", {
@@ -115,7 +115,8 @@ test_that("we can run a RICLPM with constrained grand means, constrained auto an
                                              constrain_autoregressions = T,
                                              constrain_crosslagged = T,
                                              constrain_covariances = T,
-                                             constrain_latent_variance_min_1 = T))
+                                             constrain_residual_variances = T
+                                             ))
 
   test_equivalence(eh_fit, my_fit, accuracy = 6)
 })

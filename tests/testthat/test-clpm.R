@@ -2,7 +2,7 @@ test_that("clpm works", {
   expect_silent({
     data("Fakedata_RI-CLPM_R", package = "longsem")
     data <- `Fakedata_RI-CLPM_R`
-    clpm(data = data, factors = list(list(
+    riclpm(data = data, factors = list(list(
       label = "x", vars = list("x1", "x2", "x3", "x4")
     ), list(
       label = "y", vars = list("y1", "y2", "y3", "y4")
@@ -17,8 +17,8 @@ test_that("generated syntax is sensible", {
                                                    constrain_autoregressions = F,
                                                    constrain_crosslagged = F,
                                                    constrain_observed_errors = F,
-                                                   constrain_latent_variance_min_1 = T,
                                                    constrain_covariances = F,
+                                                   constrain_residual_variances = T,
                                                    factor_names = c("x", "y")))
   })
 })
@@ -50,8 +50,8 @@ test_that("we can run a lavaan model #2", {
                                                 constrain_autoregressions = F,
                                                 constrain_crosslagged = F,
                                                 constrain_observed_errors = F,
-                                                constrain_latent_variance_min_1 = T,
                                                 constrain_covariances = F,
+                                                constrain_residual_variances = T,
                                                 factor_names = c("x", "y")),
                    data = data,
                    int.ov.free = F,
@@ -78,8 +78,8 @@ test_that("we can reproduce Flournoy's CLPM", {
                                                       constrain_autoregressions = F,
                                                       constrain_crosslagged = F,
                                                       constrain_observed_errors = F,
-                                                      constrain_latent_variance_min_1 = F,
                                                       constrain_covariances = F,
+                                                      constrain_residual_variances = F,
                                                       estimate_observed_intercepts = T,
                                                       estimate_observed_errors = F,
                                                       estimate_latent_intercepts = F,

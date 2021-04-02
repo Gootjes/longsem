@@ -50,8 +50,8 @@ options:
       type: Bool
       default: false
 
-    - name: constrain_latent_variances
-      title: Constrain latent variances
+    - name: constrain_residual_variances
+      title: Constrain residual variances
       type: Bool
       default: false
 

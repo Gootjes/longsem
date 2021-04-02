@@ -56,7 +56,7 @@ children:
       - type: CheckBox
         name: constrain_autoregressions
       - type: CheckBox
-        name: constrain_latent_variances
+        name: constrain_residual_variances
       - type: CheckBox
         name: constrain_observed_errors
       - type: CheckBox
