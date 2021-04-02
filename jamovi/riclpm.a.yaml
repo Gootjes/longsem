@@ -46,12 +46,12 @@ options:
       default: false
 
     - name: constrain_crosslagged
-      title: Constrain crosslagged paths
+      title: Constrain cross-lagged paths
       type: Bool
       default: false
 
     - name: constrain_autoregressions
-      title: Constrain autoregressions
+      title: Constrain auto-lagged paths
       type: Bool
       default: false
 
@@ -66,7 +66,7 @@ options:
       default: false
 
     - name: constrain_covariances
-      title: Constrain covariances
+      title: Constrain residual covariances
       type: Bool
       default: false
 
