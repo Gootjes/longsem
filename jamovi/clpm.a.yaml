@@ -1,7 +1,7 @@
 ---
 name:  clpm
 title: Cross lagged panel model
-menuGroup: riclpm
+menuGroup: longsem
 version: '1.0.0'
 jas: '1.2'
 

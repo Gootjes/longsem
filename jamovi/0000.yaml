@@ -1,26 +1,26 @@
 ---
 title: Longitudinal Structural Equation Modeling
 name: longsem
-version: 0.0.1
+version: 0.0.2
 jms: '1.0'
 authors:
   - Frank Gootjes
 maintainer: Frank Gootjes <Gootjes@users.noreply.github.com>
-date: '1970-01-01'
+date: '2021-04-02'
 type: R
 description: >-
-  More about what it does (maybe more than one line) Use four spaces when
-  indenting paragraphs within the Description.
+  This package allows running basic CLPM and RI-CLPM models. It displays the
+  used lavaan syntax as well.
 analyses:
   - title: Cross lagged panel model
     name: clpm
     ns: longsem
-    menuGroup: riclpm
+    menuGroup: longsem
     menuTitle: Cross lagged panel model
   - title: Random Intercept CLPM
     name: riclpm
     ns: longsem
-    menuGroup: riclpm
+    menuGroup: longsem
     menuTitle: Random Intercept CLPM
 usesNative: true
 minApp: 1.0.8

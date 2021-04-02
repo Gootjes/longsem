@@ -1,7 +1,7 @@
 ---
 name:  riclpm
 title: Random Intercept CLPM
-menuGroup: riclpm
+menuGroup: longsem
 version: '1.0.0'
 jas: '1.2'
 

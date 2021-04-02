@@ -1,7 +1,7 @@
 Package: longsem
 Type: Package
 Title: Longitudinal structural equation modeling
-Version: 0.0.1
+Version: 0.0.2
 Author: Frank Gootjes
 Maintainer: Frank Gootjes <Gootjes@users.noreply.github.com>
 Description: This package allows running basic CLPM and RI-CLPM models.
