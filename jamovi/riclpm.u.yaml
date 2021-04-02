@@ -48,11 +48,7 @@ children:
       - type: CheckBox
         name: constrain_autoregressions
       - type: CheckBox
-        name: estimate_intercepts_intercepts
-      - type: CheckBox
         name: constrain_residual_variances
-      - type: CheckBox
-        name: fix_random_intercept_first_wave_covariance_to_zero
       - type: CheckBox
         name: estimate_observed_intercepts
       - type: CheckBox
@@ -62,20 +58,24 @@ children:
       - type: CheckBox
         name: constrain_covariances
       - type: CheckBox
-        name: estimate_latent_intercepts
-      - type: CheckBox
         name: constrain_intercepts_over_time
       - type: CheckBox
         name: show_lavaan_syntax
       - type: CheckBox
         name: show_lavaan_output
   - type: LayoutBox
-    margin: large
+    margin: small
     children:
       - type: CheckBox
         name: show_schematic_plot
       - type: CheckBox
         name: include_random_intercept
+      - type: CheckBox
+        name: estimate_intercepts_intercepts
+      - type: CheckBox
+        name: estimate_latent_intercepts
+      - type: CheckBox
+        name: fix_random_intercept_first_wave_covariance_to_zero
   - type: LayoutBox
     margin: large
     children:

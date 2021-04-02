@@ -157,7 +157,7 @@ riclpmClass <- if (requireNamespace('jmvcore')) R6::R6Class(
             trilv_estims <- estims
 
             trilv_estims <- trilv_estims[trilv_estims$op == "=~",]
-            trilv_estims <- trilv_estims[substr(trilv_estims$lhs, 1, 1) == "i",]
+            trilv_estims <- trilv_estims[substr(trilv_estims$lhs, 1, 2) == "ri",]
 
             for(i in seq_along(trilv_estims[,1,drop=T])) {
                 trilv$addRow(rowKey = i, values = c(trilv_estims[i,]))

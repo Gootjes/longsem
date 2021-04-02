@@ -288,18 +288,18 @@ generate_riclpm_syntax <- function(factor_length = 4,
 
   vs_1 <- expand.grid(wave = falongs[1], var = factor_names)
 
-  intercept_latents <- glue_data(vs, "i{var} =~ 1*{var}{wave}")
+  intercept_latents <- glue_data(vs, "ri{var} =~ 1*{var}{wave}")
 
-  intercept_variances <- glue(var = factor_names, "i{var} ~~ vi{var}*i{var}")
+  intercept_variances <- glue(var = factor_names, "ri{var} ~~ vri{var}*ri{var}")
 
   i_pairs <- permutations(factor_names, factor_names)
 
   intercept_covariances <- glue_data(i_pairs,
-                                     "i{var1} ~~ covi{var1}{var2}*i{var2}")
+                                     "ri{var1} ~~ covri{var1}{var2}*ri{var2}")
 
   if(fix_random_intercept_first_wave_covariance_to_zero) {
     intercept_covariances_1 <- glue_data(expand.grid(var1 = factor_names, var2 = factor_names),
-                                         "eta{var1}1 ~~ 0*i{var2}")
+                                         "eta{var1}1 ~~ 0*ri{var2}")
   } else {
     intercept_covariances_1 <- ""
   }
@@ -307,14 +307,14 @@ generate_riclpm_syntax <- function(factor_length = 4,
 
 
   if(estimate_intercepts_intercepts) {
-    intercept_intercepts <- glue(var = factor_names, "i{var} ~ 1")
+    intercept_intercepts <- glue(var = factor_names, "ri{var} ~ 1")
   } else {
-    intercept_intercepts <- glue(var = factor_names, "i{var} ~ 0*1")
+    intercept_intercepts <- glue(var = factor_names, "ri{var} ~ 0*1")
   }
 
 
   intercept_correlations <- glue_data(i_pairs,
-                                 "cori{var1}{var2} := covi{var1}{var2} / (sqrt(vi{var1}) * sqrt(vi{var2}))")
+                                 "corri{var1}{var2} := covri{var1}{var2} / (sqrt(vri{var1}) * sqrt(vri{var2}))")
 
   c(
     clpm_syntax,
